@@ -1,28 +1,28 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
-import NoteModel from "./models/note";
+import createHttpError, { isHttpError } from "http-errors";
+import notesRouter from "./routes/notes";
 
 const app = express();
 
-app.get("/", async (request, response, next) => {
-    try {
-        const notes = await NoteModel.find().exec();
-        response.status(200).json(notes);
-    }
-    catch (error) {
-        next(error);
-    }
-});
+app.use(express.json());
+
+app.use("/api/notes/", notesRouter);
 
 app.use((request, response, next) => {
-    next(Error("Endpoint not found."));
+    next(createHttpError(404, "Endpoint not found."));
 });
 
 //Error handling middleware, using express syntax
 app.use((error: unknown, request: Request, response: Response, next: NextFunction) => {
     console.error(error);
     let errorMessage = "An unknown error occured.";
-    if (error instanceof Error) errorMessage = error.message;
+    let statusCode = 500; //fallback
+
+    if (isHttpError(error)) {
+        statusCode = error.status;
+        errorMessage = error.message;
+    }
     response.status(500).json({ error: errorMessage });
 });
 
