@@ -1,0 +1,163 @@
+:root {
+  --mainGreen: #6dca4dff;
+  --mainRed: #ed1c24ff;
+  --secondGreen: #0d9900ff;
+  --secondRed: #992700ff;
+  --buttonRadius: 10px;
+  --headerSize: 10vh;
+}
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("./fonts/OpenDyslexic3-Regular.ttf") format("truetype");
+}
+
+@media only screen and (orientation: portrait) {
+  header,
+  footer {
+    padding: 2vh 5vw;
+  }
+
+  .name {
+    height: var(--headerSize);
+    vertical-align: middle;
+  }
+
+  .container,
+  header,
+  footer {
+    width: 90%;
+  }
+}
+
+@media only screen and (orientation: landscape) {
+  header,
+  footer {
+    padding: 2vh 1vw;
+  }
+
+  .name {
+    height: var(--headerSize);
+    vertical-align: middle;
+  }
+
+  .container{
+    width: 25vw;
+  }
+
+  .header-content,
+  .footer-content {
+    width: 35vw;
+  }
+}
+
+* {
+  border: none;
+  border-radius: var(--buttonRadius);
+  margin: 0;
+  font-family: "OpenDyslexic", sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+  user-select: none;
+}
+
+body {
+  background-color: var(--mainGreen);
+}
+
+button {
+  width: 40%;
+  background-color: var(--mainRed);
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--secondRed);
+}
+
+footer {
+  bottom: 0;
+  background-image: linear-gradient(
+    to top,
+    black,
+    var(--mainGreen) 90%,
+    transparent
+  );
+  height: var(--headerSize);
+  text-align: center;
+}
+
+header {
+  background-image: linear-gradient(
+    to bottom,
+    black,
+    var(--mainGreen) 90%,
+    transparent
+  );
+  height: calc(var(--headerSize) * 1.25);
+  top: 0;
+  font-size: 1.5rem;
+}
+
+input {
+  width: 90%;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
+  border-bottom: 2px solid #ddd;
+}
+
+label {
+  display: block;
+  text-align: left;
+}
+
+a,
+span {
+  line-height: var(--headerSize);
+  vertical-align: middle;
+  color: black;
+}
+
+button,
+input {
+  padding: 5%;
+  border-radius: var(--buttonRadius);
+}
+
+input,
+label {
+  margin: 0 5%;
+  font-size: 1.5rem;
+}
+
+footer,
+header {
+  position: fixed;
+  width: 100%;
+  left: 0;
+}
+
+.button-group {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.container {
+  margin: calc(var(--headerSize) * 1.5) auto;
+}
+
+.form-group {
+  margin-bottom: 5%;
+  text-align: left;
+}
+
+.icon {
+  height: var(--headerSize);
+  vertical-align: middle;
+}
+
+.footer-content,
+.header-content {
+  margin: 0 auto;
+  height: 100%;
+}
