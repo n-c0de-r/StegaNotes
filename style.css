@@ -8,19 +8,28 @@
 }
 
 @font-face {
-  font-family: "OpenDyslexic";
+  font-family: "OpenDyslexic3";
   src: url("./fonts/OpenDyslexic3-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexic2";
+  src: url("./fonts/OpenDyslexic-Regular.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexicMono";
+  src: url("./fonts/OpenDyslexicMono-Regular.otf") format("opentype");
+  font-display: swap;
 }
 
 @media only screen and (orientation: portrait) {
+
   header,
   footer {
     padding: 2vh 5vw;
-  }
-
-  .name {
-    height: var(--headerSize);
-    vertical-align: middle;
   }
 
   .container,
@@ -31,18 +40,14 @@
 }
 
 @media only screen and (orientation: landscape) {
+
   header,
   footer {
     padding: 2vh 1vw;
   }
 
-  .name {
-    height: var(--headerSize);
-    vertical-align: middle;
-  }
-
-  .container{
-    width: 25vw;
+  .container {
+    width: 35vw;
   }
 
   .header-content,
@@ -55,7 +60,7 @@
   border: none;
   border-radius: var(--buttonRadius);
   margin: 0;
-  font-family: "OpenDyslexic", sans-serif;
+  font-family: "OpenDyslexic3", sans-serif;
   font-weight: bold;
   text-decoration: none;
   user-select: none;
@@ -77,23 +82,15 @@ button:hover {
 
 footer {
   bottom: 0;
-  background-image: linear-gradient(
-    to top,
-    black,
-    var(--mainGreen) 90%,
-    transparent
-  );
   height: var(--headerSize);
   text-align: center;
 }
 
 header {
-  background-image: linear-gradient(
-    to bottom,
-    black,
-    var(--mainGreen) 90%,
-    transparent
-  );
+  background-image: linear-gradient(to bottom,
+      black,
+      var(--mainGreen) 90%,
+      transparent);
   height: calc(var(--headerSize) * 1.25);
   top: 0;
   font-size: 1.5rem;
@@ -142,8 +139,12 @@ header {
   text-align: center;
 }
 
-.container {
-  margin: calc(var(--headerSize) * 1.5) auto;
+.footer {
+  background-image: linear-gradient(to top,
+    black,
+    var(--mainGreen) 90%,
+    transparent)
+  ;
 }
 
 .form-group {
@@ -153,11 +154,123 @@ header {
 
 .icon {
   height: var(--headerSize);
-  vertical-align: middle;
+}
+
+.name {
+  width: 60%;
+  float: middle;
+}
+
+.notes {
+  min-width: 300px;
+  width: 90%;
+  height: 90%;
+  
+  background-color: blue;
+}
+
+.container,
+.notes {
+  margin: calc(var(--headerSize) * 1.5) auto;
+}
+
+.container,
+.header-content,
+.footer-content {
+  min-width: 300px;
 }
 
 .footer-content,
 .header-content {
   margin: 0 auto;
   height: 100%;
+}
+
+.icon,
+.name {
+  vertical-align: middle;
+}
+
+/*hamburger menu */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s, visibility .35s, height .35s;
+  overflow: hidden;
+  background: black;
+  z-index: -1;
+}
+
+.hamburger-input {
+  display: none;
+}
+
+.hamburger-menu {
+  width: 10%;
+  height: 50%;
+  max-width: 25px;
+  max-height: 25px;
+  margin: 0 0.1px;
+  border: none;
+  border-radius: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  background: linear-gradient(to bottom,
+    var(--mainRed), var(--secondRed) 20%,
+      transparent 20%, transparent 40%,
+      var(--mainGreen) 40%, var(--secondGreen) 60%,
+      transparent 60%, transparent 80%,
+      var(--mainRed) 80%, var(--secondRed) 100%);
+}
+
+.hamburger-menu .sidebar-menu {
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  right: -250px;
+  width: 200px;
+  height: calc(100vh - calc(var(--headerSize)*1.5));
+  background-color: var(--secondRed);
+  transition: 0.5s;
+  padding: 0px 10px;
+  box-sizing: border-box;
+}
+
+.hamburger-menu h3 {
+  color: var(--secondGreen);
+  font-size: 2.2rem;
+}
+
+.hamburger-menu ul {
+  padding-left: 0px;
+}
+
+.hamburger-menu li {
+  list-style-type: none;
+  line-height: 3rem;
+}
+
+.hamburger-menu a {
+  color: var(--mainGreen);
+  font-size: 1.3rem;
+  text-decoration: none;
+}
+
+.hamburger-menu a:hover {
+  text-decoration: underline;
+}
+
+.hamburger-input:checked+.hamburger-menu .sidebar-menu {
+  visibility: visible;
+  right: 0;
+}
+
+.hamburger-input:checked~.overlay {
+  visibility: visible;
+  opacity: 0.4;
 }
