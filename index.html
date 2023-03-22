@@ -55,7 +55,7 @@
 	<script defer src="./script.js"></script>
 </head>
 
-<body>
+<body onbeforeunload="return 'If you refresh now, you\'ll have to login again.';">
 	<header>
 		<div class="header-content">
 			<!-- dynamic content place -->
@@ -63,7 +63,12 @@
 	</header>
 
 	<section>
-		<!-- dynamic content place -->
+		<div class="page">
+			<!-- dynamic content place -->
+		</div>
+		<div class="notes">
+			<!-- dynamic content place -->
+		</div>
 	</section>
 
 	<footer>

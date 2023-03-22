@@ -13,28 +13,23 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "OpenDyslexic2";
-  src: url("./fonts/OpenDyslexic-Regular.otf") format("opentype");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "OpenDyslexicMono";
-  src: url("./fonts/OpenDyslexicMono-Regular.otf") format("opentype");
-  font-display: swap;
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
 }
 
 @media only screen and (orientation: portrait) {
 
   header,
-  footer {
+  footer,
+  .newNote {
     padding: 2vh 5vw;
   }
-
-  .container,
+  
   header,
-  footer {
+  footer,
+  .container,
+  .newNote {
     width: 90%;
   }
 }
@@ -42,16 +37,15 @@
 @media only screen and (orientation: landscape) {
 
   header,
-  footer {
+  footer,
+  .newNote {
     padding: 2vh 1vw;
   }
 
-  .container {
-    width: 35vw;
-  }
-
+  .container,
   .header-content,
-  .footer-content {
+  .footer-content,
+  .newNote {
     width: 35vw;
   }
 }
@@ -68,6 +62,7 @@
 
 body {
   background-color: var(--mainGreen);
+  overflow: hidden;
 }
 
 button {
@@ -88,24 +83,29 @@ footer {
 
 header {
   background-image: linear-gradient(to bottom,
-      black,
-      var(--mainGreen) 90%,
-      transparent);
+    black 10%,
+    var(--secondGreen) 45%,
+    var(--mainGreen) 60%,
+    transparent);
   height: calc(var(--headerSize) * 1.25);
   top: 0;
   font-size: 1.5rem;
 }
 
-input {
-  width: 90%;
-  box-sizing: border-box;
-  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
-  border-bottom: 2px solid #ddd;
-}
-
 label {
   display: block;
   text-align: left;
+}
+
+section {
+  display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+textarea {
+  height: 75%;
 }
 
 a,
@@ -117,39 +117,72 @@ span {
 
 button,
 input {
-  padding: 5%;
+  padding: 1%;
   border-radius: var(--buttonRadius);
 }
 
 input,
-label {
+label,
+textarea {
   margin: 0 5%;
-  font-size: 1.5rem;
+  font-size: 1.25em;
+}
+
+input,
+textarea {
+  width: 90%;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
+  border-bottom: 2px solid #ddd;
 }
 
 footer,
 header {
-  position: fixed;
   width: 100%;
   left: 0;
+  z-index: 1;
+}
+
+footer,
+header,
+.add-button {
+  position: fixed;
+}
+
+.add-button,
+.noteButton.close {
+  font-family: sans-serif;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-button {
+  width: 5rem;
+  height: 5rem;
+  bottom: 2rem;
+  right: 2rem;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.animate {
+  animation: animatezoom 0.6s
 }
 
 .button-group {
-  margin: 0 auto;
+  margin: 5%;
   text-align: center;
 }
 
 .footer {
   background-image: linear-gradient(to top,
-    black,
-    var(--mainGreen) 90%,
-    transparent)
+  black 25%,
+  var(--secondGreen) 50%,
+  var(--mainGreen) 75%,
+  transparent)
   ;
-}
-
-.form-group {
-  margin-bottom: 5%;
-  text-align: left;
 }
 
 .icon {
@@ -161,16 +194,49 @@ header {
   float: middle;
 }
 
+.newNote {
+  margin: auto;
+  display: none;
+  height: 50%;
+  left: 0;
+  top: 0;
+  background-color: var(--secondRed);
+}
+
 .notes {
+  position: relative;
+  display: none;
+  padding: 1%;
   min-width: 300px;
   width: 90%;
-  height: 90%;
-  
-  background-color: blue;
+  background-color: rgba(128, 128, 128, 0.432);
+}
+
+.noteButton {
+  background-color: var(--mainGreen);
+}
+
+.noteButton:hover {
+  background-color: var(--secondGreen);
+}
+
+.noteButton.close {
+  width: 2rem;
+  height: 2rem;
+  float: right;
+  right: 0;
+  top: 0;
+}
+
+.userTitle {
+  width: 85%;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .container,
-.notes {
+.notes,
+.newNote {
   margin: calc(var(--headerSize) * 1.5) auto;
 }
 
@@ -189,88 +255,4 @@ header {
 .icon,
 .name {
   vertical-align: middle;
-}
-
-/*hamburger menu */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .35s, visibility .35s, height .35s;
-  overflow: hidden;
-  background: black;
-  z-index: -1;
-}
-
-.hamburger-input {
-  display: none;
-}
-
-.hamburger-menu {
-  width: 10%;
-  height: 50%;
-  max-width: 25px;
-  max-height: 25px;
-  margin: 0 0.1px;
-  border: none;
-  border-radius: 5px;
-  display: inline-block;
-  vertical-align: middle;
-  background: linear-gradient(to bottom,
-    var(--mainRed), var(--secondRed) 20%,
-      transparent 20%, transparent 40%,
-      var(--mainGreen) 40%, var(--secondGreen) 60%,
-      transparent 60%, transparent 80%,
-      var(--mainRed) 80%, var(--secondRed) 100%);
-}
-
-.hamburger-menu .sidebar-menu {
-  visibility: hidden;
-  position: fixed;
-  top: 0;
-  right: -250px;
-  width: 200px;
-  height: calc(100vh - calc(var(--headerSize)*1.5));
-  background-color: var(--secondRed);
-  transition: 0.5s;
-  padding: 0px 10px;
-  box-sizing: border-box;
-}
-
-.hamburger-menu h3 {
-  color: var(--secondGreen);
-  font-size: 2.2rem;
-}
-
-.hamburger-menu ul {
-  padding-left: 0px;
-}
-
-.hamburger-menu li {
-  list-style-type: none;
-  line-height: 3rem;
-}
-
-.hamburger-menu a {
-  color: var(--mainGreen);
-  font-size: 1.3rem;
-  text-decoration: none;
-}
-
-.hamburger-menu a:hover {
-  text-decoration: underline;
-}
-
-.hamburger-input:checked+.hamburger-menu .sidebar-menu {
-  visibility: visible;
-  right: 0;
-}
-
-.hamburger-input:checked~.overlay {
-  visibility: visible;
-  opacity: 0.4;
 }

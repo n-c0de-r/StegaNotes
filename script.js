@@ -1,65 +1,60 @@
+let isValidUsername, isValidPassword, isConfirmed;
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
 
-let isValidUsername, isValidPassword, isConfirmed;
-
-loginHeader("abcd");
-// loginContainer();
-// loginFooter();
+fillHeader();
+loginContainer();
+fillFooter();
 
 // Content functions //
 
-function loginHeader(name) {
-  let head = `<img src="./icons/icon.svg" class="icon" alt="StegaNotes Icon">
-  <img src="./icons/name.svg" class="name" alt="StegaNotes Name">`;
+/**
+ * Fills in the header dynamically.
+ * @param {string} name The Username to display
+ */
+function fillHeader(name) {
+  const header = document.querySelector("header");
+  header.innerHTML = `
+    <div class="header-content">
+      <img src="./icons/icon.svg" class="icon" alt="StegaNotes Icon">
+      <img src="./icons/name.svg" class="name" alt="StegaNotes Name">
+    </div>
+  `;
 
-  if(name !== undefined) {
-    const svg = createSVG(name);
-    const url = serializeSVG(svg);
-
-    head = `
-      <img src=${url} style="width: 90%; float: left;" alt="User's Name">
-      <input type="checkbox" class="hamburger-input burger-shower" />
-			<label class="hamburger-menu" for="hamburger-input">
-				<nav class="sidebar-menu">
-				<h3>Menu</h3>
-				<ul>
-					<li><a href="#">About</a></li>
-					<li><a href="#">Contact</a></li>
-				</ul>
-				</nav>
-			</label>
+  if (name !== undefined) {
+    header.innerHTML = `
+      <div class="header-content">
+        <img src="" class="userTitle" style="" alt="User's Name">
+      </div>
     `;
+    createPNG(name);
   }
-
-  const header = document.querySelector(".header-content");
-  header.innerHTML = `${head}`;
 }
 
+/**
+ * Fills the content section dynamically with the login page.
+ */
 function loginContainer() {
-  const container = document.querySelector("section");
+  const container = document.querySelector(".page");
   container.innerHTML = `
     <div class="container">
-      <form id="login-form">
-        <div class="form-group">
-          <label for="username" id="username-label">Username</label>
-          <input type="text" class="username" name="username" title="If the username is invalid, nothing will happen." placeholder="type here" required>
-        </div>
-        <div class="form-group">
-          <label for="password" id="password-label">Password</label>
-          <input type="password" class="password" name="password" title="If the password is invalid, nothing will happen." placeholder="type here" required>
-        </div>
-        <div class="button-group">
-          <button type="submit" class="login-button">Login</button>
-          <button type="submit" class="register-button">Register</button>
-        </div>
-      </form>
+      <label for="username" id="username-label">Username</label>
+      <input type="text" class="username" name="username" title="If the username is invalid, nothing will happen." placeholder="type here" required>
+
+      <label for="password" id="password-label">Password</label>
+      <input type="password" class="password" name="password" title="If the password is invalid, nothing will happen." placeholder="type here" required>
+
+      <div class="button-group">
+        <button type="submit" class="login-button">Login</button>
+        <button type="submit" class="register-button">Register</button>
+      </div>
     </div>
   `;
 
   const loginButton = document.querySelector(".login-button");
-  loginButton.addEventListener("click", function(event) {
+  loginButton.addEventListener("click", function (event) {
     event.preventDefault();
     login();
   });
@@ -68,66 +63,30 @@ function loginContainer() {
   registerButton.addEventListener("click", registerContainer);
 }
 
+/**
+ * Dynamically fill the content section with the register form.
+ */
 function registerContainer() {
   const footer = document.querySelector("footer");
-  footer.classList.toggle('footer');
+  footer.classList.remove('footer');
   footer.innerHTML = "";
+  footer.style.display = "none";
 
-  const container = document.querySelector("section");
+  const container = document.querySelector(".page");
   container.innerHTML = `
     <div class="container">
-      <form id="login-form">
-        <div class="form-group">
-          <label for="username" id="username-label">New Username</label>
-          <input type="text" class="username" name="username" pattern="^.*(?=.{4,}).*$" title="The username must be at least 4 characters long." placeholder="min. 4 chars..." required>
-        </div>
-        <div class="form-group">
-          <label for="password" id="password-label">New Password</label>
-          <input type="password" class="password" name="password" pattern="^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?:{}|<>]).*$" title="The password must be at least 8 characters long, have at least 1 of each case letter, a number and a special character." placeholder="A-Z, a-z, 0-9, specials" required>
-        </div>
-        <div class="form-group">
-          <label for="password" id="confirm-label">Confirm Password</label>
-          <input type="password" class="confirm" name="confirm" placeholder="1 of each, min. 8 chars" required>
-        </div>
-        <div class="button-group">
-          <button type="submit" class="register-button">Confirm</button>
-          <button type="submit" class="cancel-button">Cancel</button>
-        </div>
-      </form>
-    </div>
-  `;
+      <label for="username" id="username-label">New Username</label>
+      <input type="text" class="username" name="username" pattern="^.*(?=.{4,8}).*$" title="The username must be 4 to 8 characters long." placeholder="min: 4, max: 8" required>
 
-  const usernameInput = document.querySelector(".username");
-  usernameInput.addEventListener("keyup", validateUsername);
+      <label for="password" id="password-label">New Password</label>
+      <input type="password" class="password" name="password" pattern="^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?:{}|<>]).*$" title="The password must be at least 8 characters long, have at least 1 of each case letter, a number and a special character." placeholder="A-Z, a-z, 0-9, symbol" required>
 
-  const passwordInput = document.querySelector(".password");
-  passwordInput.addEventListener("keyup", validatePassword);
-  passwordInput.addEventListener("keyup", validateConfirm);
+      <label for="password" id="confirm-label">Confirm Password</label>
+      <input type="password" class="confirm" name="confirm" placeholder="1x each, min. 8 chars" required>
 
-  const confirmInput = document.querySelector(".confirm");
-  confirmInput.addEventListener("keyup", validateConfirm);
-
-  const registerButton = document.querySelector(".register-button");
-  registerButton.addEventListener("click", function(event) {
-    event.preventDefault();
-    registerUser();
-  });
-
-  const cancelButton = document.querySelector(".cancel-button");
-  cancelButton.addEventListener("click", loginContainer);
-  cancelButton.addEventListener("click", loginFooter);
-}
-
-function notesContainer() {
-  const footer = document.querySelector("footer");
-  footer.classList.toggle('footer');
-  footer.innerHTML = "";
-
-  const container = document.querySelector("section");
-  container.innerHTML = `
-    <div class="notes">
-      <div>
-        <h1>notespage for testing</h1>
+      <div class="button-group">
+        <button type="submit" class="register-button">Register</button>
+        <button type="submit" class="cancel-button">Cancel</button>
       </div>
     </div>
   `;
@@ -143,29 +102,61 @@ function notesContainer() {
   confirmInput.addEventListener("keyup", validateConfirm);
 
   const registerButton = document.querySelector(".register-button");
-  registerButton.addEventListener("click", function(event) {
-    // event.preventDefault();
-    registerUser();
-  });
+  registerButton.addEventListener("click", registerUser);
 
   const cancelButton = document.querySelector(".cancel-button");
-  cancelButton.addEventListener("click", loginContainer);
-  cancelButton.addEventListener("click", loginFooter);
+  cancelButton.addEventListener("click", function () {
+    fillHeader();
+    loginContainer();
+    fillFooter();
+  });
 }
 
-function loginFooter() {
+/**
+ * Dynamically fill the content section with notes.
+ */
+function fillNotes() {
+  // TODO: add notes
+  
+  closeNew();
+}
+
+function fillFooter(name) {
   const footer = document.querySelector("footer");
-  footer.classList.toggle('footer');
+  footer.classList.add('footer');
+  footer.style.display = "block"
   footer.innerHTML = `
   <div class="footer-content">
-			<a href="https://github.com/n-c0de-r/StegaNotes">
-      <span style="color: var(--mainGreen);">n-c0de-r</span>
-      <span> @ </span>
-      <span style="color: var(--mainRed);">GitHub</span>
-      <span>2023</span>
+    <a href="https://github.com/n-c0de-r/StegaNotes">
+      <span style="color: var(--mainGreen);">n-c0de-r @ </span>
+      <span style="color: var(--mainRed);">GitHub 2023</span>
     </a>
 	</div>
   `;
+
+  if (name !== undefined) {
+    footer.innerHTML = ``;
+  }
+}
+
+function createPNG(name) {
+  const svg = createSVG(name);
+  const url = serializeSVG(svg);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const img = new Image();
+
+  img.onload = function () {
+    canvas.width = (900 + (name.length - 4) * 100);
+    canvas.height = 210;
+    ctx.drawImage(img, 0, 0);
+    const pngDataURL = canvas.toDataURL("image/png");
+    const userTitle = document.querySelector(".userTitle");
+    userTitle.src = pngDataURL;
+    canvas.remove();
+  };
+
+  img.src = url;
 }
 
 /**
@@ -175,22 +166,13 @@ function loginFooter() {
  */
 function createSVG(name) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("width", "1000");
+  const textWidth = (900 + (name.length - 4) * 100);
+  svg.setAttribute("width", `${textWidth}`);
   svg.setAttribute("height", "210");
-  svg.setAttribute("viewBox", "0 0 1000 210");
-  const size = Math.min(1000/(name.length+2), 100);
-  const offset1 = name.length/4;
-  const offset2 = name.length/8;
-  // TODO Fix the formula
-  const text1 = createText(`${name}'s${" ".repeat(offset1+offset2+4)}`, "#6dca4d", "end", size);
-  const text2 = createText("Notes "+" ".repeat(offset2), "#ed1c24", "end", size);
+  svg.setAttribute("viewBox", `0 0 ${textWidth} 210`);
 
-  const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-  group.appendChild(text1);
-  group.appendChild(text2);
-
-  svg.appendChild(group);
+  const text = createText(`${name}`);
+  svg.appendChild(text);
 
   return svg;
 }
@@ -198,29 +180,36 @@ function createSVG(name) {
 /**
  * Creates a text element to nest inside a SVG.
  * @param {string} content Text to make an SVG from
- * @param {string} color The color of the text
- * @param {string} anchor How to anchor the text
  * @returns The text as an SVG element
  */
-function createText(content, color, anchor, size) {
+function createText(content) {
   const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  text.setAttribute("x", "100%"); // 4=55, 6=60, 8=65 9=67.5 10=72,5 11=70 12=67.5 
+  text.setAttribute("x", "50%");
   text.setAttribute("y", "50%");
-  text.setAttribute("text-anchor", anchor);
+  text.setAttribute("dominant-baseline", "middle");
+  text.setAttribute("text-anchor", "middle");
   text.setAttribute("font-family", "OpenDyslexic3");
-  text.setAttribute("font-size", size);
-  text.setAttribute("fill", color);
-  text.setAttribute("stroke-width", "3.7772");
+  text.setAttribute("font-size", "100");
+  text.setAttribute("stroke-width", "5");
   text.setAttribute("stroke", "#000000");
   text.setAttribute("xml:space", "preserve");
-  text.textContent = content;
+
+  const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+  tspan1.setAttribute("fill", "#6dca4d");
+  tspan1.textContent = `${content}'s `;
+  const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+  tspan2.setAttribute("fill", "#ed1c24");
+  tspan2.textContent = "Notes";
+
+  text.appendChild(tspan1);
+  text.appendChild(tspan2);
 
   return text;
 }
 
 /**
  * Serializes a SVG as a Base64 URL to use as a src for an image.
- * @param {*} svg The SVG to convert
+ * @param {object} svg The SVG to convert
  * @returns Base64 Data URL
  */
 function serializeSVG(svg) {
@@ -229,6 +218,71 @@ function serializeSVG(svg) {
   const dataURL = "data:image/svg+xml;base64," + btoa(svgString);
 
   return dataURL;
+}
+
+// Note functions //
+
+function newNote() {
+  const newContainer = document.querySelector('.page');
+  newContainer.innerHTML=`
+    <div class="newNote animate">
+      <button type="submit" class="noteButton close" title="Close Modal">&times;</button>
+      <label for="noteTitle">Note Title</label>
+      <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
+
+      <label for="noteText">Note Text</label>
+      <textarea class="text" name="noteText" placeholder="Enter original text" rows="5"></textarea>
+
+      <div class="button-group">
+        <button type="submit" class="noteButton encrypt-button">Encrypt</button>
+        <button type="submit" class="noteButton save-button">Save</button>
+      </div>
+    </div>
+  `;
+
+  document.querySelector('.newNote').style.display = 'block';
+
+  const closeButton = document.querySelector(".close");
+  closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    closeNew();
+  });
+
+  const encryptButton = document.querySelector(".encrypt-button");
+  encryptButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    encryptNote();
+  });
+
+  const saveButton = document.querySelector(".save-button");
+  saveButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    saveNote();
+  });
+}
+
+function closeNew() {
+  const newContainer = document.querySelector('.page');
+  newContainer.innerHTML=`
+  <div class="button-group">
+    <button type="submit" class="add-button">+</button>
+  </div>`;
+
+  const addButton = document.querySelector(".add-button");
+  addButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    newNote();
+  });
+
+  newContainer.style.display = 'block';
+}
+
+function encryptNote() {
+  // TODO: encrypt here
+}
+
+function saveNote() {
+  // TODO: save here
 }
 
 // Login functions //
@@ -241,35 +295,37 @@ async function login() {
   const password = document.querySelector(".password").value;
   const usedName = await existsDB(username);
 
-  if(username.length>0 && usedName) {
+  if (username.length > 0 && usedName) {
     const request = indexedDB.open(username, 1);
 
-    request.onsuccess = function() {
+    request.onsuccess = function () {
       const db = request.result;
       const transaction = db.transaction("logins", "readonly");
       const logins = transaction.objectStore("logins");
-      
+
       const login = logins.get(username);
 
-      login.onsuccess = async function() {
+      login.onsuccess = async function () {
         let creds = await login.result;
-        const user = creds.user;
         const pass = creds.pass;
         const salt = creds.salt;
         const hash = await hashPassword(password, salt);
 
-      if(hash === pass) {
-        loginHeader(username);
-        notesContainer();
-      } else {
-        alert(`Entered credentials seem to be wrong!\nTry again.`);
-      }
+        if (hash === pass) {
+          fillHeader(username);
+          fillNotes();
+          fillFooter(username);
+        } else {
+          alert(`Entered credentials seem to be wrong!\nTry again.`);
+        }
       };
-      
+
       transaction.oncomplete = function () {
         db.close();
       };
     };
+  } else {
+    alert(`Entered credentials seem to be wrong!\nTry again.`);
   }
 }
 
@@ -286,9 +342,11 @@ function registerUser() {
 
 /**
  * Validates if a username is already used for a database.
+ * And also if it is of the correct length of 4-8 chars.
  */
 async function validateUsername() {
   const minLength = 4;
+  const maxLength = 8;
   const username = document.querySelector(".username").value;
   const userLabel = document.querySelector("#username-label");
 
@@ -298,13 +356,13 @@ async function validateUsername() {
   }
   const usedName = await existsDB(username);
 
-  if (!usedName && username.length >= minLength) {
+  isValidUsername = !usedName && username.length >= minLength && username.length <= maxLength;
+
+  if (isValidUsername) {
     userLabel.innerHTML = 'New Username' + '✔️';
   } else {
     userLabel.innerHTML = 'New Username' + '❌';
   }
-
-  isValidUsername = !usedName && username.length >= minLength;
 }
 
 /**
@@ -396,32 +454,32 @@ async function openDatabase(username, password) {
 
   const saltHash = generateSalt();
   const passHash = await hashPassword(password, saltHash);
-  
+
   const request = indexedDB.open(username, 1);
 
-  request.onupgradeneeded = function() {
+  request.onupgradeneeded = function () {
     const db = request.result;
     if (!db.objectStoreNames.contains('logins')) {
-      db.createObjectStore("logins", {keyPath: 'user'});
-      db.createObjectStore("notes", {keyPath: 'title'});
+      db.createObjectStore("logins", { keyPath: 'user' });
+      db.createObjectStore("notes", { keyPath: 'title' });
     }
   };
-  
-  request.onsuccess = function() {
+
+  request.onsuccess = function () {
     const db = request.result;
     const transaction = db.transaction("logins", "readwrite");
     const logins = transaction.objectStore("logins");
-    
-    const login = {user: username, pass: passHash, salt: saltHash};
+
+    const login = { user: username, pass: passHash, salt: saltHash };
     logins.add(login);
-    
+
     transaction.oncomplete = function () {
       alert(`User \"${username}\" successfully created.\n
       Please be sure to remember your password.\n
       There's no way to retrieve it for now!`);
       db.close();
       loginContainer();
-      loginFooter();
+      fillFooter();
     };
   };
 }
