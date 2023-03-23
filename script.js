@@ -1,5 +1,4 @@
-let isValidUsername, isValidPassword, isConfirmed;
-
+let isValidUsername, isValidPassword, isConfirmed, notesCount, wordList;
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
@@ -26,7 +25,7 @@ function fillHeader(name) {
   if (name !== undefined) {
     header.innerHTML = `
       <div class="header-content">
-        <img src="" class="userTitle" style="" alt="User's Name">
+        <img src="" class="userTitle" alt=${name}'s Notes">
       </div>
     `;
     createPNG(name);
@@ -47,19 +46,21 @@ function loginContainer() {
       <input type="password" class="password" name="password" title="If the password is invalid, nothing will happen." placeholder="type here" required>
 
       <div class="button-group">
-        <button type="submit" class="login-button">Login</button>
-        <button type="submit" class="register-button">Register</button>
+        <button class="loginButton">Login</button>
+        <button class="registerButton">Register</button>
       </div>
     </div>
   `;
 
-  const loginButton = document.querySelector(".login-button");
+  const loginButton = document.querySelector(".loginButton");
   loginButton.addEventListener("click", function (event) {
     event.preventDefault();
-    login();
+    const username = document.querySelector(".username").value;
+    const password = document.querySelector(".password").value;
+    login(username, password);
   });
 
-  const registerButton = document.querySelector(".register-button");
+  const registerButton = document.querySelector(".registerButton");
   registerButton.addEventListener("click", registerContainer);
 }
 
@@ -68,9 +69,7 @@ function loginContainer() {
  */
 function registerContainer() {
   const footer = document.querySelector("footer");
-  footer.classList.remove('footer');
   footer.innerHTML = "";
-  footer.style.display = "none";
 
   const container = document.querySelector(".page");
   container.innerHTML = `
@@ -85,8 +84,8 @@ function registerContainer() {
       <input type="password" class="confirm" name="confirm" placeholder="1x each, min. 8 chars" required>
 
       <div class="button-group">
-        <button type="submit" class="register-button">Register</button>
-        <button type="submit" class="cancel-button">Cancel</button>
+        <button class="registerButton">Register</button>
+        <button class="cancelButton">Cancel</button>
       </div>
     </div>
   `;
@@ -101,12 +100,11 @@ function registerContainer() {
   const confirmInput = document.querySelector(".confirm");
   confirmInput.addEventListener("keyup", validateConfirm);
 
-  const registerButton = document.querySelector(".register-button");
+  const registerButton = document.querySelector(".registerButton");
   registerButton.addEventListener("click", registerUser);
 
-  const cancelButton = document.querySelector(".cancel-button");
-  cancelButton.addEventListener("click", function () {
-    fillHeader();
+  const cancelButton = document.querySelector(".cancelButton");
+  cancelButton.addEventListener("click", function() {
     loginContainer();
     fillFooter();
   });
@@ -114,13 +112,37 @@ function registerContainer() {
 
 /**
  * Dynamically fill the content section with notes.
+ * @param {string} name The DB name to open
  */
-function fillNotes() {
-  // TODO: add notes
-  
-  closeNew();
+function fillNotes(name) {
+  const request = indexedDB.open(name, 1);
+
+  request.onsuccess = function() {
+    const db = request.result;
+    const tsxNotes = db.transaction("notes", "readonly");
+    const noteStore = tsxNotes.objectStore("notes");
+    const notesRequest = noteStore.getAll();
+
+    notesRequest.onsuccess = async function() {
+      const notesArray = notesRequest.result;
+      notesCount = notesArray.length;
+      notesArray.forEach(note => {
+        console.log(note);
+        // TODO: add notes
+      });
+    };
+
+    notesRequest.oncomplete = function() {
+      db.close();
+    };
+  }
+  closeNewModal();
 }
 
+/**
+ * Fills in the header dynamically.
+ * @param {string} name If this is set, make no footer
+ */
 function fillFooter(name) {
   const footer = document.querySelector("footer");
   footer.classList.add('footer');
@@ -139,6 +161,10 @@ function fillFooter(name) {
   }
 }
 
+/**
+ * Creates a header PNG from the Username
+ * @param {string} name Username
+ */
 function createPNG(name) {
   const svg = createSVG(name);
   const url = serializeSVG(svg);
@@ -146,7 +172,7 @@ function createPNG(name) {
   const ctx = canvas.getContext("2d");
   const img = new Image();
 
-  img.onload = function () {
+  img.onload = function() {
     canvas.width = (900 + (name.length - 4) * 100);
     canvas.height = 210;
     ctx.drawImage(img, 0, 0);
@@ -222,11 +248,11 @@ function serializeSVG(svg) {
 
 // Note functions //
 
-function newNote() {
+function newModal() {
   const newContainer = document.querySelector('.page');
   newContainer.innerHTML=`
-    <div class="newNote animate">
-      <button type="submit" class="noteButton close" title="Close Modal">&times;</button>
+    <div class="modal animate">
+      <button class="modalButton close" title="Close Modal">&times;</button>
       <label for="noteTitle">Note Title</label>
       <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
 
@@ -234,93 +260,134 @@ function newNote() {
       <textarea class="text" name="noteText" placeholder="Enter original text" rows="5"></textarea>
 
       <div class="button-group">
-        <button type="submit" class="noteButton encrypt-button">Encrypt</button>
-        <button type="submit" class="noteButton save-button">Save</button>
+        <button class="modalButton encryptButton">Encrypt</button>
+        <button class="modalButton saveButton">Save</button>
       </div>
     </div>
   `;
 
-  document.querySelector('.newNote').style.display = 'block';
+  document.querySelector('.modal').style.display = 'block';
 
   const closeButton = document.querySelector(".close");
   closeButton.addEventListener("click", function(event) {
     event.preventDefault();
-    closeNew();
+    closeNewModal();
   });
 
-  const encryptButton = document.querySelector(".encrypt-button");
+  const encryptButton = document.querySelector(".encryptButton");
   encryptButton.addEventListener("click", function (event) {
     event.preventDefault();
-    encryptNote();
+    const text = document.querySelector(".text").value;
+    const key = prompt("Please enter your Keyword");
+    text = encodeText(text, key);
   });
 
-  const saveButton = document.querySelector(".save-button");
+  const saveButton = document.querySelector(".saveButton");
   saveButton.addEventListener("click", function (event) {
     event.preventDefault();
-    saveNote();
+    const title = document.querySelector(".title").value;
+    const text = document.querySelector(".text").value;
+    storeNote(title, text);
   });
 }
 
-function closeNew() {
+function closeNewModal() {
   const newContainer = document.querySelector('.page');
   newContainer.innerHTML=`
   <div class="button-group">
-    <button type="submit" class="add-button">+</button>
+    <button class="addButton">+</button>
   </div>`;
 
-  const addButton = document.querySelector(".add-button");
+  const addButton = document.querySelector(".addButton");
   addButton.addEventListener("click", function(event) {
     event.preventDefault();
-    newNote();
+    newModal();
   });
 
   newContainer.style.display = 'block';
 }
 
-function encryptNote() {
-  // TODO: encrypt here
+/**
+ * Picks a random word from a wordlist.
+ * @param {char} char Character to look for
+ * @param {number} value Key character value for calculations
+ * @returns Word containing the letter at a specific position
+ */
+function pickWord(char, value) {
+  let possibleWords = [...wordList]
+    .filter(word => word.includes(char))
+    .filter(word => word.charAt(value % word.length) === char);
+      
+  const randomIndex = getRandomInt(0, possibleWords.length);
+  return candidateWord = possibleWords[randomIndex];
 }
 
-function saveNote() {
-  // TODO: save here
+/**
+ * Stores a note in the Database.
+ * @param {string} newTitle Title of the note
+ * @param {string} newText Text of the note
+ */
+function storeNote(newTitle, newText) {
+  let t = newTitle
+  if(newText === undefined || newText.length === 0) return;
+  if(newTitle === undefined || newTitle.length === 0) t = "New Note #" + (notesCount+1);
+
+  const altText = document.querySelector(".userTitle").getAttribute('alt');
+  const name = altText.substring(0, altText.indexOf("'"));
+  const request = indexedDB.open(name, 1);
+
+  request.onsuccess = async function() {
+    const db = request.result;
+    const tsxNotes = db.transaction("notes", "readwrite");
+    const notesStore = tsxNotes.objectStore("notes");
+
+    const note = { title: t, text: newText, createdAt: Date.now() };
+    notesStore.add(note);
+
+    tsxNotes.oncomplete = function() {
+      fillNotes(name);
+      closeNewModal();
+      db.close();
+    };
+  };
 }
 
 // Login functions //
 
 /**
  * Logins a User and Opens their database.
+ * @param {string} username The username to log in
+ * @param {string} password The password to use to log in
  */
-async function login() {
-  const username = document.querySelector(".username").value;
-  const password = document.querySelector(".password").value;
+async function login(username, password) {
   const usedName = await existsDB(username);
 
   if (username.length > 0 && usedName) {
     const request = indexedDB.open(username, 1);
 
-    request.onsuccess = function () {
+    request.onsuccess = function() {
       const db = request.result;
-      const transaction = db.transaction("logins", "readonly");
-      const logins = transaction.objectStore("logins");
+      const tsxLogin = db.transaction("logins", "readonly");
+      const loginStore = tsxLogin.objectStore("logins");
 
-      const login = logins.get(username);
+      const login = loginStore.get(username);
 
-      login.onsuccess = async function () {
-        let creds = await login.result;
+      login.onsuccess = async function() {
+        const creds = login.result;
         const pass = creds.pass;
         const salt = creds.salt;
         const hash = await hashPassword(password, salt);
 
         if (hash === pass) {
           fillHeader(username);
-          fillNotes();
           fillFooter(username);
+          fillNotes(username);
         } else {
           alert(`Entered credentials seem to be wrong!\nTry again.`);
         }
       };
 
-      transaction.oncomplete = function () {
+      tsxLogin.oncomplete = function() {
         db.close();
       };
     };
@@ -413,13 +480,13 @@ function validateConfirm() {
     return;
   }
 
-  if (password === confirm) {
+  isConfirmed = password === confirm;
+
+  if (isConfirmed) {
     confLabel.innerHTML = 'Confirm Password' + '✔️';
   } else {
     confLabel.innerHTML = 'Confirm Password' + '❌';
   }
-
-  isConfirmed = password === confirm;
 }
 
 /**
@@ -457,7 +524,7 @@ async function openDatabase(username, password) {
 
   const request = indexedDB.open(username, 1);
 
-  request.onupgradeneeded = function () {
+  request.onupgradeneeded = function() {
     const db = request.result;
     if (!db.objectStoreNames.contains('logins')) {
       db.createObjectStore("logins", { keyPath: 'user' });
@@ -465,27 +532,27 @@ async function openDatabase(username, password) {
     }
   };
 
-  request.onsuccess = function () {
+  request.onsuccess = function() {
     const db = request.result;
-    const transaction = db.transaction("logins", "readwrite");
-    const logins = transaction.objectStore("logins");
+    const tsxLogins = db.transaction("logins", "readwrite");
+    const loginsStore = tsxLogins.objectStore("logins");
 
-    const login = { user: username, pass: passHash, salt: saltHash };
-    logins.add(login);
+    const newLogin = { user: username, pass: passHash, salt: saltHash };
+    loginsStore.add(newLogin);
 
-    transaction.oncomplete = function () {
+    tsxLogins.oncomplete = function() {
       alert(`User \"${username}\" successfully created.\n
       Please be sure to remember your password.\n
       There's no way to retrieve it for now!`);
       db.close();
-      loginContainer();
-      fillFooter();
+      login(username, password);
     };
   };
 }
 
-function addNote() {
+async function addNote(newTitle, newText) {
   // TODO: add function
+  
 }
 
 // Crypto functions //
@@ -526,4 +593,89 @@ function hexString(buffer) {
     return paddedHexCode;
   });
   return hexCodes.join("");
+}
+
+/**
+ * Used to encode texts steganographically.
+ * @param {*} text  Test to encode
+ * @param {*} key Key to use for encoding
+ * @returns Encoded text
+ */
+function encodeText(text, key) {
+  if(text.trim().length === 0 || key.trim().length === 0) return;
+  const keyLength = key.length;
+  const end = text.length;
+  const hiddenWords = new Array(end).fill('');
+
+  for (let i = 0; i < end; i++) {
+    const character = text.charAt(i);
+      if (character === ' ') {
+        continue;
+      }
+
+      const word = pickWord(character, key.codePointAt(i % keyLength));
+
+      if(word === undefined || word === null) {
+        hiddenWords[i] = character;
+        continue;
+      }
+      hiddenWords[i] = word;
+  }
+  
+  return hiddenWords.join(" ");
+}
+
+/**
+ * Used to decode texts steganographically.
+ * @param {string} text Test to decode
+ * @param {string} key Key to use for decoding
+ * @returns Decoded text
+ */
+function decodeText(text, key) {
+  if(text.trim().length === 0 || key.trim().length === 0) return;
+  const words = text.split(' ');
+  const keyLength = key.length;
+  const end = words.length;
+  let result = '';
+  let keyIndex = 0;
+
+  for (let i = 0; i < end; i++) {
+      let word = words[i];
+
+      if(word === "") {
+        result += " ";
+        keyIndex++;
+        continue;
+      }
+
+      const value = key.codePointAt(keyIndex % keyLength);
+      result += word.charAt(value % word.length);
+      keyIndex++;
+  }
+  
+  return result;
+}
+
+/**
+ * Generate random numbers using the crypto API.
+ * @param {int} min The lower bound
+ * @param {int} max The upper bound
+ * @returns The random integer
+ */
+function getRandomInt(min, max) {
+  const range = max - min;
+  const bytesNeeded = Math.ceil(Math.log2(range) / 8);
+  const randomBytes = new Uint8Array(bytesNeeded);
+  let randomInt;
+
+  do {
+    window.crypto.getRandomValues(randomBytes);
+    randomInt = 0;
+    for (var i = 0; i < bytesNeeded; i++) {
+      randomInt |= randomBytes[i] << (i * 8);
+    }
+    randomInt = randomInt % range;
+  } while (randomInt >= range);
+  
+  return randomInt + min;
 }

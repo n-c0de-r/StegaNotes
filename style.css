@@ -14,38 +14,49 @@
 }
 
 @keyframes animatezoom {
-  from {transform: scale(0)} 
-  to {transform: scale(1)}
+  from {
+    transform: scale(0)
+  }
+
+  to {
+    transform: scale(1)
+  }
 }
 
 @media only screen and (orientation: portrait) {
 
   header,
   footer,
-  .newNote {
+  .modal {
     padding: 2vh 5vw;
   }
-  
+
   header,
   footer,
   .container,
-  .newNote {
+  .modal,
+  .note {
     width: 90%;
   }
 }
 
 @media only screen and (orientation: landscape) {
 
+  .note {
+    min-width: 200px;
+    width: 25%;
+  }
+
   header,
   footer,
-  .newNote {
+  .modal {
     padding: 2vh 1vw;
   }
 
   .container,
   .header-content,
   .footer-content,
-  .newNote {
+  .modal {
     width: 35vw;
   }
 }
@@ -62,7 +73,6 @@
 
 body {
   background-color: var(--mainGreen);
-  overflow: hidden;
 }
 
 button {
@@ -73,6 +83,10 @@ button {
 
 button:hover {
   background-color: var(--secondRed);
+}
+
+button:disabled {
+  background-color: gray;
 }
 
 footer {
@@ -99,9 +113,8 @@ label {
 
 section {
   display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+  flex-direction: column;
+  height: 100%;
 }
 
 textarea {
@@ -145,20 +158,11 @@ header {
 
 footer,
 header,
-.add-button {
+.addButton {
   position: fixed;
 }
 
-.add-button,
-.noteButton.close {
-  font-family: sans-serif;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.add-button {
+.addButton {
   width: 5rem;
   height: 5rem;
   bottom: 2rem;
@@ -168,7 +172,7 @@ header,
 }
 
 .animate {
-  animation: animatezoom 0.6s
+  animation: animatezoom 0.3s
 }
 
 .button-group {
@@ -178,23 +182,17 @@ header,
 
 .footer {
   background-image: linear-gradient(to top,
-  black 25%,
-  var(--secondGreen) 50%,
-  var(--mainGreen) 75%,
-  transparent)
-  ;
+    black 25%,
+    var(--secondGreen) 50%,
+    var(--mainGreen) 75%,
+    transparent);
 }
 
 .icon {
   height: var(--headerSize);
 }
 
-.name {
-  width: 60%;
-  float: middle;
-}
-
-.newNote {
+.modal {
   margin: auto;
   display: none;
   height: 50%;
@@ -203,24 +201,15 @@ header,
   background-color: var(--secondRed);
 }
 
-.notes {
-  position: relative;
-  display: none;
-  padding: 1%;
-  min-width: 300px;
-  width: 90%;
-  background-color: rgba(128, 128, 128, 0.432);
-}
-
-.noteButton {
+.modalButton {
   background-color: var(--mainGreen);
 }
 
-.noteButton:hover {
+.modalButton:hover {
   background-color: var(--secondGreen);
 }
 
-.noteButton.close {
+.modalButton.close {
   width: 2rem;
   height: 2rem;
   float: right;
@@ -228,22 +217,26 @@ header,
   top: 0;
 }
 
+.name {
+  width: 60%;
+  float: middle;
+}
+
+.note {
+  margin: 2%;
+}
+
+.notes {
+  display: none;
+  margin: calc(var(--headerSize) * 1.25) auto;
+  width: 95%;
+  background-color: rgba(128, 128, 128, 0.432);
+}
+
 .userTitle {
   width: 85%;
   display: inline-block;
   vertical-align: middle;
-}
-
-.container,
-.notes,
-.newNote {
-  margin: calc(var(--headerSize) * 1.5) auto;
-}
-
-.container,
-.header-content,
-.footer-content {
-  min-width: 300px;
 }
 
 .footer-content,
@@ -255,4 +248,26 @@ header,
 .icon,
 .name {
   vertical-align: middle;
+}
+
+.addButton,
+.modalButton.close,
+.noteButton {
+  font-family: sans-serif;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container,
+.modal {
+  margin: calc(var(--headerSize) * 1.5) auto;
+}
+
+.container,
+.header-content,
+.footer-content,
+.notes {
+  min-width: 300px;
 }
