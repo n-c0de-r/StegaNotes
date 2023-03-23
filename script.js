@@ -1,4 +1,4 @@
-let isValidUsername, isValidPassword, isConfirmed, notesCount, wordList;
+let isValidUsername, isValidPassword, isConfirmed, notesArray, wordList;
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
@@ -115,27 +115,12 @@ function registerContainer() {
  * @param {string} name The DB name to open
  */
 function fillNotes(name) {
-  const request = indexedDB.open(name, 1);
-
-  request.onsuccess = function() {
-    const db = request.result;
-    const tsxNotes = db.transaction("notes", "readonly");
-    const noteStore = tsxNotes.objectStore("notes");
-    const notesRequest = noteStore.getAll();
-
-    notesRequest.onsuccess = async function() {
-      const notesArray = notesRequest.result;
-      notesCount = notesArray.length;
-      notesArray.forEach(note => {
-        console.log(note);
-        // TODO: add notes
-      });
-    };
-
-    notesRequest.oncomplete = function() {
-      db.close();
-    };
-  }
+  getNotes(name);
+  notesArray.forEach(note => {
+    addNote(note);
+  });
+  const noteContainer = document.querySelector(".notes");
+  noteContainer.style.display = 'block';
   closeNewModal();
 }
 
@@ -308,48 +293,25 @@ function closeNewModal() {
 }
 
 /**
- * Picks a random word from a wordlist.
- * @param {char} char Character to look for
- * @param {number} value Key character value for calculations
- * @returns Word containing the letter at a specific position
+ * Adds a note to the page.
+ * @param {object} note The note object to display
  */
-function pickWord(char, value) {
-  let possibleWords = [...wordList]
-    .filter(word => word.includes(char))
-    .filter(word => word.charAt(value % word.length) === char);
-      
-  const randomIndex = getRandomInt(0, possibleWords.length);
-  return candidateWord = possibleWords[randomIndex];
+async function addNote(note) {
+  let noteButton = document.createElement('button');
+  noteButton.classList.add('note');
+  noteButton.innerHTML = note.title;
+  noteButton.dataset.title = note.title;
+  noteButton.dataset.text = note.text;
+  noteButton.dataset.date = note.date;
+  noteButton.dataset.lang = "lang";
+
+  
+  const noteContainer = document.querySelector(".notes");
+  noteContainer.appendChild(noteButton);
 }
 
-/**
- * Stores a note in the Database.
- * @param {string} newTitle Title of the note
- * @param {string} newText Text of the note
- */
-function storeNote(newTitle, newText) {
-  let t = newTitle
-  if(newText === undefined || newText.length === 0) return;
-  if(newTitle === undefined || newTitle.length === 0) t = "New Note #" + (notesCount+1);
-
-  const altText = document.querySelector(".userTitle").getAttribute('alt');
-  const name = altText.substring(0, altText.indexOf("'"));
-  const request = indexedDB.open(name, 1);
-
-  request.onsuccess = async function() {
-    const db = request.result;
-    const tsxNotes = db.transaction("notes", "readwrite");
-    const notesStore = tsxNotes.objectStore("notes");
-
-    const note = { title: t, text: newText, createdAt: Date.now() };
-    notesStore.add(note);
-
-    tsxNotes.oncomplete = function() {
-      fillNotes(name);
-      closeNewModal();
-      db.close();
-    };
-  };
+function showNote() {
+  // TODO: show note
 }
 
 // Login functions //
@@ -426,9 +388,9 @@ async function validateUsername() {
   isValidUsername = !usedName && username.length >= minLength && username.length <= maxLength;
 
   if (isValidUsername) {
-    userLabel.innerHTML = 'New Username' + '✔️';
+    userLabel.innerHTML = 'New Username' + ' ✔️';
   } else {
-    userLabel.innerHTML = 'New Username' + '❌';
+    userLabel.innerHTML = 'New Username' + ' ❌';
   }
 }
 
@@ -459,9 +421,9 @@ function validatePassword() {
     hasNumber;
 
   if (validPassword) {
-    passLabel.innerHTML = 'New Password' + '✔️';
+    passLabel.innerHTML = 'New Password' + ' ✔️';
   } else {
-    passLabel.innerHTML = 'New Password' + '❌';
+    passLabel.innerHTML = 'New Password' + ' ❌';
   }
 
   isValidPassword = validPassword;
@@ -483,9 +445,9 @@ function validateConfirm() {
   isConfirmed = password === confirm;
 
   if (isConfirmed) {
-    confLabel.innerHTML = 'Confirm Password' + '✔️';
+    confLabel.innerHTML = 'Confirm Password' + ' ✔️';
   } else {
-    confLabel.innerHTML = 'Confirm Password' + '❌';
+    confLabel.innerHTML = 'Confirm Password' + ' ❌';
   }
 }
 
@@ -529,6 +491,7 @@ async function openDatabase(username, password) {
     if (!db.objectStoreNames.contains('logins')) {
       db.createObjectStore("logins", { keyPath: 'user' });
       db.createObjectStore("notes", { keyPath: 'title' });
+      db.createObjectStore("languages", { keyPath: 'lang' });
     }
   };
 
@@ -537,8 +500,9 @@ async function openDatabase(username, password) {
     const tsxLogins = db.transaction("logins", "readwrite");
     const loginsStore = tsxLogins.objectStore("logins");
 
-    const newLogin = { user: username, pass: passHash, salt: saltHash };
+    const newLogin = { user: username, pass: passHash, salt: saltHash, lang: "eng" };
     loginsStore.add(newLogin);
+    notesArray = [];
 
     tsxLogins.oncomplete = function() {
       alert(`User \"${username}\" successfully created.\n
@@ -550,10 +514,61 @@ async function openDatabase(username, password) {
   };
 }
 
-async function addNote(newTitle, newText) {
-  // TODO: add function
-  
+/**
+ * Get all notes from a store.
+ * @param {*} name The User's store to access.
+ */
+function getNotes(name) {
+  const request = indexedDB.open(name, 1);
+
+  request.onsuccess = function() {
+    const db = request.result;
+    const tsxNotes = db.transaction("notes", "readonly");
+    const noteStore = tsxNotes.objectStore("notes");
+    const notesRequest = noteStore.getAll();
+
+    notesRequest.onsuccess = async function() {
+      notesArray = notesRequest.result;
+    };
+
+    notesRequest.oncomplete = function() {
+      db.close();
+    };
+  }
 }
+
+/**
+ * Stores a note in the Database.
+ * @param {string} newTitle Title of the note
+ * @param {string} newText Text of the note
+ */
+function storeNote(newTitle, newText) {
+  let t = newTitle
+  if(newText === undefined || newText.length === 0) return;
+  if(newTitle === undefined || newTitle.length === 0) t = "New Note #" + (notesArray.length+1);
+
+  const altText = document.querySelector(".userTitle").getAttribute('alt');
+  const name = altText.substring(0, altText.indexOf("'"));
+  const request = indexedDB.open(name, 1);
+
+  request.onsuccess = async function() {
+    const db = request.result;
+    const tsxNotes = db.transaction("notes", "readwrite");
+    const notesStore = tsxNotes.objectStore("notes");
+
+    const note = { title: t, text: newText, createdAt: Date.now() };
+    notesStore.add(note);
+    notesArray.push(note);
+
+    tsxNotes.oncomplete = function() {
+      addNote(note);
+      closeNewModal();
+      db.close();
+    };
+  };
+}
+
+
 
 // Crypto functions //
 
@@ -654,6 +669,21 @@ function decodeText(text, key) {
   }
   
   return result;
+}
+
+/**
+ * Picks a random word from a wordlist.
+ * @param {char} char Character to look for
+ * @param {number} value Key character value for calculations
+ * @returns Word containing the letter at a specific position
+ */
+function pickWord(char, value) {
+  const possibleWords = [...wordList]
+    .filter(word => word.includes(char))
+    .filter(word => word.charAt(value % word.length) === char);
+      
+  const randomIndex = getRandomInt(0, possibleWords.length);
+  return candidateWord = possibleWords[randomIndex];
 }
 
 /**
