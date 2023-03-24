@@ -376,7 +376,7 @@ function showNote(note) {
       <label for="noteTitle">${note.title}</label>
       <textarea class="text" name="noteText" rows="6" readonly>${note.text}</textarea>
       
-      <label for="noteTime">${note.createdAt}</label>
+      <label for="noteTime">${note.date}</label>
 
       <div class="button-group">
         <button class="modalButton decodeButton">Decrypt</button>
