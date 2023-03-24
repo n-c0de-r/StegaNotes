@@ -1,4 +1,4 @@
-let isValidUsername, isValidPassword, isConfirmed, notesArray, wordList;
+let isValidUsername, isValidPassword, isConfirmed, wordList;
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
@@ -17,8 +17,8 @@ function fillHeader(name) {
   const header = document.querySelector("header");
   header.innerHTML = `
     <div class="header-content">
-      <img src="./icons/icon.svg" class="icon" alt="StegaNotes Icon">
-      <img src="./icons/name.svg" class="name" alt="StegaNotes Name">
+      <img src="./icons/favicon.png" class="icon" alt="StegaNotes Icon">
+      <img src="./icons/name.png" class="name" alt="StegaNotes Name">
     </div>
   `;
 
@@ -53,7 +53,7 @@ function loginContainer() {
   `;
 
   const loginButton = document.querySelector(".loginButton");
-  loginButton.addEventListener("click", function (event) {
+  loginButton.addEventListener("click", function(event) {
     event.preventDefault();
     const username = document.querySelector(".username").value;
     const password = document.querySelector(".password").value;
@@ -86,6 +86,9 @@ function registerContainer() {
       <div class="button-group">
         <button class="registerButton">Register</button>
         <button class="cancelButton">Cancel</button>
+        <input type="file" accept="application/json" class="fileInput">
+         <button class="pickButton" style="margin-top: 3vh;">Pick a Dictionary</button>
+        </input>
       </div>
     </div>
   `;
@@ -108,20 +111,28 @@ function registerContainer() {
     loginContainer();
     fillFooter();
   });
+
+  const fileInput = document.querySelector(".fileInput");
+  fileInput.addEventListener("change", readDictionary);
+  
+  const pickButton = document.querySelector(".pickButton");
+  pickButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    fileInput.click();
+  });
 }
 
 /**
  * Dynamically fill the content section with notes.
- * @param {string} name The DB name to open
+ * @param {string} array The array to read
  */
-function fillNotes(name) {
-  getNotes(name);
-  notesArray.forEach(note => {
-    addNote(note);
+function fillNotes(array) {
+  array.forEach(note => {
+    addNote(note.title, note.text, note.createdAt);
   });
   const noteContainer = document.querySelector(".notes");
   noteContainer.style.display = 'block';
-  closeNewModal();
+  closeModal();
 }
 
 /**
@@ -134,7 +145,7 @@ function fillFooter(name) {
   footer.style.display = "block"
   footer.innerHTML = `
   <div class="footer-content">
-    <a href="https://github.com/n-c0de-r/StegaNotes">
+    <a href="https://github.com/n-c0de-r/StegaNotes" style="text-shadow: 2px 2px 3px black">
       <span style="color: var(--mainGreen);">n-c0de-r @ </span>
       <span style="color: var(--mainRed);">GitHub 2023</span>
     </a>
@@ -231,52 +242,48 @@ function serializeSVG(svg) {
   return dataURL;
 }
 
-// Note functions //
+/***Note functions***/
 
-function newModal() {
-  const newContainer = document.querySelector('.page');
-  newContainer.innerHTML=`
-    <div class="modal animate">
-      <button class="modalButton close" title="Close Modal">&times;</button>
-      <label for="noteTitle">Note Title</label>
-      <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
+/**
+ * Adds a note to the page.
+ * @param {string} inputTitle Title of the note
+ * @param {string} inputText Text of the note
+ */
+async function addNote(inputTitle, inputText, inputDate) {
+  const noteContainer = document.querySelector(".notes");
+  let newTitle = inputTitle
+  const notesNr = noteContainer.childElementCount;
+  if(inputTitle === undefined || inputTitle.length === 0) newTitle = "New Note #" + (notesNr+1);
 
-      <label for="noteText">Note Text</label>
-      <textarea class="text" name="noteText" placeholder="Enter original text" rows="5"></textarea>
+  let date = inputDate;
+  if(inputDate === undefined) {
+    const d = new Date();
+    date = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}, ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
+  }
+  
 
-      <div class="button-group">
-        <button class="modalButton encryptButton">Encrypt</button>
-        <button class="modalButton saveButton">Save</button>
-      </div>
-    </div>
-  `;
+  let noteButton = document.createElement('button');
+  noteButton.classList.add('note');
+  noteButton.id = newTitle;
+  noteButton.innerHTML = `${newTitle}`;
+  noteButton.dataset.title = newTitle;
+  noteButton.dataset.text = inputText;
+  noteButton.dataset.date = date;
 
-  document.querySelector('.modal').style.display = 'block';
-
-  const closeButton = document.querySelector(".close");
-  closeButton.addEventListener("click", function(event) {
-    event.preventDefault();
-    closeNewModal();
+  storeNote({title: newTitle, text: inputText, createdAt: date});
+  
+  noteButton.addEventListener("click", function(event) {
+    showNote(event.target.dataset);
   });
 
-  const encryptButton = document.querySelector(".encryptButton");
-  encryptButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    const text = document.querySelector(".text").value;
-    const key = prompt("Please enter your Keyword");
-    text = encodeText(text, key);
-  });
-
-  const saveButton = document.querySelector(".saveButton");
-  saveButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    const title = document.querySelector(".title").value;
-    const text = document.querySelector(".text").value;
-    storeNote(title, text);
-  });
+  noteContainer.appendChild(noteButton);
 }
 
-function closeNewModal() {
+/**
+ * Closes the note modal and displays the button.
+ */
+function closeModal() {
+  document.querySelector(".notes").style.display = "block";
   const newContainer = document.querySelector('.page');
   newContainer.innerHTML=`
   <div class="button-group">
@@ -293,28 +300,131 @@ function closeNewModal() {
 }
 
 /**
- * Adds a note to the page.
- * @param {object} note The note object to display
+ * Displays the new note modal.
  */
-async function addNote(note) {
-  let noteButton = document.createElement('button');
-  noteButton.classList.add('note');
-  noteButton.innerHTML = note.title;
-  noteButton.dataset.title = note.title;
-  noteButton.dataset.text = note.text;
-  noteButton.dataset.date = note.date;
-  noteButton.dataset.lang = "lang";
+function newModal() {
+  document.querySelector(".notes").style.display = "none";
+  const newContainer = document.querySelector('.page');
+  newContainer.innerHTML=`
+    <div class="modal zoomIn">
+      <button class="modalButton close" title="Close Modal">&times;</button>
+      <label for="noteTitle">Note Title</label>
+      <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
 
-  
+      <label for="noteText">Note Text (max. 200 chars)</label>
+      <textarea class="text" name="noteText" placeholder="Enter original text" rows="4"></textarea>
+
+      <div class="button-group">
+        <button class="modalButton encodeButton">Encrypt</button>
+        <button class="modalButton decodeButton" style="display: none;">Decrypt</button>
+        <button class="modalButton saveButton">Save</button>
+      </div>
+    </div>
+  `;
+
+  document.querySelector('.modal').style.display = 'block';
+
+  const closeButton = document.querySelector(".close");
+  closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    closeModal();
+  });
+
+  const encodeButton = document.querySelector(".encodeButton");
+  encodeButton.disabled = true;
+  encodeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const key = prompt("Please enter your Keyword");
+    if(key.trim().length === 0) return;
+    const text = document.querySelector(".text");
+    text.value = encodeText(text.value, key);
+  });
+
+  const saveButton = document.querySelector(".saveButton");
+  saveButton.disabled = true;
+  saveButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const text = document.querySelector(".text").value;
+    if(text.length === 0) return;
+    const title = document.querySelector(".title").value;
+    addNote(title, text);
+    closeModal();
+  });
+
+  const inputText = document.querySelector(".text");
+  inputText.addEventListener("keyup", function(event) {
+    if(inputText.value.trim().length === 0 || inputText.value.trim().length > 200) {
+      encodeButton.disabled = true;
+      saveButton.disabled = true;
+    } else {
+      encodeButton.disabled = false;
+      saveButton.disabled = false;
+    }
+  });
+}
+
+/**
+ * Displays the note modal
+ * @param {object} note The note to display.
+ */
+function showNote(note) {
+  document.querySelector(".notes").style.display = "none";
+  const newContainer = document.querySelector('.page');
+  newContainer.innerHTML=`
+    <div class="modal zoomIn">
+      <button class="modalButton close" title="Close Modal">&times;</button>
+      <label for="noteTitle">${note.title}</label>
+      <textarea class="text" name="noteText" rows="6" readonly>${note.text}</textarea>
+      
+      <label for="noteTime">${note.createdAt}</label>
+
+      <div class="button-group">
+        <button class="modalButton decodeButton">Decrypt</button>
+        <button class="modalButton deleteButton">Delete</button>
+      </div>
+    </div>
+  `;
+
+  document.querySelector('.modal').style.display = 'block';
+
+  const closeButton = document.querySelector(".close");
+  closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    closeModal();
+  });
+
+  const decodeButton = document.querySelector(".decodeButton");
+  decodeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const key = prompt("Please enter your Keyword");
+    if (key.trim().length === 0) {
+      decodeButton.disabled = true;
+      return;
+    }
+    const text = document.querySelector(".text");
+    text.value = decodeText(text.value, key);
+  });
+
+  const deleteButton = document.querySelector(".deleteButton");
+  deleteButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    if(confirm("Do you really want to remove this note?"))
+      removeNote(note.title);
+  });
+}
+
+/**
+ * Removes a note from the page.
+ * @param {string} title The note name to delete
+ */
+function removeNote(title) {
   const noteContainer = document.querySelector(".notes");
-  noteContainer.appendChild(noteButton);
+  noteContainer.removeChild(document.getElementById(title));
+  closeModal();
+  deleteNote(title);
 }
 
-function showNote() {
-  // TODO: show note
-}
-
-// Login functions //
+/***Login functions***/
 
 /**
  * Logins a User and Opens their database.
@@ -330,12 +440,14 @@ async function login(username, password) {
     request.onsuccess = function() {
       const db = request.result;
       const tsxLogin = db.transaction("logins", "readonly");
+      const tsxLangs = db.transaction("languages", "readonly");
       const loginStore = tsxLogin.objectStore("logins");
+      const langsStore = tsxLangs.objectStore("languages");
+      const loginRequest = loginStore.get(username);
+      const langRequest = langsStore.get("eng");
 
-      const login = loginStore.get(username);
-
-      login.onsuccess = async function() {
-        const creds = login.result;
+      loginRequest.onsuccess = async function() {
+        const creds = loginRequest.result;
         const pass = creds.pass;
         const salt = creds.salt;
         const hash = await hashPassword(password, salt);
@@ -343,14 +455,14 @@ async function login(username, password) {
         if (hash === pass) {
           fillHeader(username);
           fillFooter(username);
-          fillNotes(username);
+          getNotes(db);
         } else {
           alert(`Entered credentials seem to be wrong!\nTry again.`);
         }
       };
 
-      tsxLogin.oncomplete = function() {
-        db.close();
+      langRequest.onsuccess = function() {
+        wordList = langRequest.result.words;
       };
     };
   } else {
@@ -467,7 +579,7 @@ async function existsDB(name) {
   return validName;
 }
 
-// Database functions //
+/***Database functions***/
 
 /**
  * Creates a new database with the user's name
@@ -500,15 +612,13 @@ async function openDatabase(username, password) {
     const tsxLogins = db.transaction("logins", "readwrite");
     const loginsStore = tsxLogins.objectStore("logins");
 
-    const newLogin = { user: username, pass: passHash, salt: saltHash, lang: "eng" };
+    const newLogin = { user: username, pass: passHash, salt: saltHash };
     loginsStore.add(newLogin);
-    notesArray = [];
 
     tsxLogins.oncomplete = function() {
       alert(`User \"${username}\" successfully created.\n
       Please be sure to remember your password.\n
       There's no way to retrieve it for now!`);
-      db.close();
       login(username, password);
     };
   };
@@ -516,37 +626,23 @@ async function openDatabase(username, password) {
 
 /**
  * Get all notes from a store.
- * @param {*} name The User's store to access.
+ * @param {string} db The DB to read the store from
  */
-function getNotes(name) {
-  const request = indexedDB.open(name, 1);
+function getNotes(db) {
+  const tsxNotes = db.transaction("notes", "readonly");
+  const noteStore = tsxNotes.objectStore("notes");
+  const notesRequest = noteStore.getAll();
 
-  request.onsuccess = function() {
-    const db = request.result;
-    const tsxNotes = db.transaction("notes", "readonly");
-    const noteStore = tsxNotes.objectStore("notes");
-    const notesRequest = noteStore.getAll();
-
-    notesRequest.onsuccess = async function() {
-      notesArray = notesRequest.result;
-    };
-
-    notesRequest.oncomplete = function() {
-      db.close();
-    };
-  }
+  notesRequest.onsuccess = function() {
+    fillNotes(notesRequest.result);
+  };
 }
 
 /**
  * Stores a note in the Database.
- * @param {string} newTitle Title of the note
- * @param {string} newText Text of the note
+ * @param {object} note The note object to display
  */
-function storeNote(newTitle, newText) {
-  let t = newTitle
-  if(newText === undefined || newText.length === 0) return;
-  if(newTitle === undefined || newTitle.length === 0) t = "New Note #" + (notesArray.length+1);
-
+function storeNote(note) {
   const altText = document.querySelector(".userTitle").getAttribute('alt');
   const name = altText.substring(0, altText.indexOf("'"));
   const request = indexedDB.open(name, 1);
@@ -555,20 +651,65 @@ function storeNote(newTitle, newText) {
     const db = request.result;
     const tsxNotes = db.transaction("notes", "readwrite");
     const notesStore = tsxNotes.objectStore("notes");
-
-    const note = { title: t, text: newText, createdAt: Date.now() };
     notesStore.add(note);
-    notesArray.push(note);
-
-    tsxNotes.oncomplete = function() {
-      addNote(note);
-      closeNewModal();
-      db.close();
-    };
   };
 }
 
+/**
+ * Deletes a note from the database.
+ * @param {string} title Key of note to delete
+ */
+function deleteNote(title) {
+  const altText = document.querySelector(".userTitle").getAttribute('alt');
+  const name = altText.substring(0, altText.indexOf("'"));
+  const request = indexedDB.open(name, 1);
 
+  request.onsuccess = async function() {
+    const db = request.result;
+    const tsxNotes = db.transaction("notes", "readwrite");
+    const notesStore = tsxNotes.objectStore("notes");
+    notesStore.delete(title);
+  };
+}
+
+/**
+ * Reads in a JSON file and stores it in the database.
+ * @param {file} event The File event
+ */
+function readDictionary(event) {
+  const name = document.querySelector(".username").value;
+  const file = event.target.files[0];
+  const lang = file.name.substring(0, file.name.lastIndexOf('.'));
+
+  const reader = new FileReader();
+  reader.readAsText(file);
+
+  reader.onload = () => {
+      const readFile = reader.result;
+      const obj = JSON.parse(readFile);
+      wordList = Object.values(obj)[0];
+      storeDictionary(name, lang, words);
+  };
+}
+
+/**
+ * Stores the dictionary in the database.
+ * @param {string} name Name of the database.
+ * @param {string} lang Language code
+ * @param {array} words Array of words.
+ */
+function storeDictionary(name, lang, words) {
+  const request = indexedDB.open(name, 1);
+
+  request.onsuccess = async function() {
+    const db = request.result;
+    const tsxLangs = db.transaction("languages", "readwrite");
+    const langsStore = tsxLangs.objectStore("languages");
+
+    const language = { lang: lang, words: words };
+    langsStore.add(language);
+  };
+}
 
 // Crypto functions //
 
@@ -612,31 +753,30 @@ function hexString(buffer) {
 
 /**
  * Used to encode texts steganographically.
- * @param {*} text  Test to encode
- * @param {*} key Key to use for encoding
+ * @param {string} text  Test to encode
+ * @param {string} key Key to use for encoding
  * @returns Encoded text
  */
 function encodeText(text, key) {
-  if(text.trim().length === 0 || key.trim().length === 0) return;
-  const keyLength = key.length;
   const end = text.length;
-  const hiddenWords = new Array(end).fill('');
+  const hiddenWords = [];
 
   for (let i = 0; i < end; i++) {
     const character = text.charAt(i);
-      if (character === ' ') {
-        continue;
-      }
+    if (character === ' ') {
+      continue;
+    }
 
-      const word = pickWord(character, key.codePointAt(i % keyLength));
+    const word = pickWord(character, key.codePointAt(i % key.length));
 
-      if(word === undefined || word === null) {
-        hiddenWords[i] = character;
-        continue;
-      }
-      hiddenWords[i] = word;
+    if(word === undefined || word === null) {
+      hiddenWords[i] = character;
+      continue;
+    }
+    hiddenWords[i] = word;
   }
   
+  const encodeButton = document.querySelector(".encodeButton").disabled = true;
   return hiddenWords.join(" ");
 }
 
@@ -647,7 +787,6 @@ function encodeText(text, key) {
  * @returns Decoded text
  */
 function decodeText(text, key) {
-  if(text.trim().length === 0 || key.trim().length === 0) return;
   const words = text.split(' ');
   const keyLength = key.length;
   const end = words.length;
@@ -667,7 +806,6 @@ function decodeText(text, key) {
       result += word.charAt(value % word.length);
       keyIndex++;
   }
-  
   return result;
 }
 

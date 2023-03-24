@@ -5,6 +5,8 @@
   --secondRed: #992700ff;
   --buttonRadius: 10px;
   --headerSize: 10vh;
+  --shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
+  --gradientColors: black 10%, var(--secondGreen) 40%, var(--mainGreen) 70%, transparent;
 }
 
 @font-face {
@@ -25,6 +27,20 @@
 
 @media only screen and (orientation: portrait) {
 
+  .footer-content>a {
+    display: block;
+    margin-top: calc(var(--headerSize) * 3/4);
+    text-shadow: var(--shadow);
+  }
+
+  .footer {
+    height: calc(var(--headerSize) * 2);
+  }
+
+  .notes {
+    padding-bottom: calc(var(--headerSize));
+  }
+
   header,
   footer,
   .modal {
@@ -36,11 +52,15 @@
   .container,
   .modal,
   .note {
-    width: 90%;
+    width: 80%;
   }
 }
 
 @media only screen and (orientation: landscape) {
+
+  .footer {
+    height: var(--headerSize);
+  }
 
   .note {
     min-width: 200px;
@@ -91,17 +111,13 @@ button:disabled {
 
 footer {
   bottom: 0;
-  height: var(--headerSize);
   text-align: center;
+  background-image: linear-gradient(to top, var(--gradientColors));
 }
 
 header {
-  background-image: linear-gradient(to bottom,
-    black 10%,
-    var(--secondGreen) 45%,
-    var(--mainGreen) 60%,
-    transparent);
-  height: calc(var(--headerSize) * 1.25);
+  background-image: linear-gradient(to bottom, var(--gradientColors));
+  height: calc(var(--headerSize) * 1.20);
   top: 0;
   font-size: 1.5rem;
 }
@@ -135,18 +151,9 @@ input {
 }
 
 input,
-label,
-textarea {
-  margin: 0 5%;
-  font-size: 1.25em;
-}
-
-input,
 textarea {
   width: 90%;
   box-sizing: border-box;
-  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
-  border-bottom: 2px solid #ddd;
 }
 
 footer,
@@ -154,6 +161,19 @@ header {
   width: 100%;
   left: 0;
   z-index: 1;
+}
+
+button,
+input,
+textarea {
+  box-shadow: var(--shadow);
+}
+
+input,
+label,
+textarea {
+  margin: 0 5%;
+  font-size: 1.25em;
 }
 
 footer,
@@ -171,8 +191,12 @@ header,
   z-index: 2;
 }
 
-.animate {
-  animation: animatezoom 0.3s
+.zoomIn {
+  animation: animatezoom 0.3s forwards;
+}
+
+.zoomOut {
+  animation: animatezoom 0.3s reverse;
 }
 
 .button-group {
@@ -180,12 +204,8 @@ header,
   text-align: center;
 }
 
-.footer {
-  background-image: linear-gradient(to top,
-    black 25%,
-    var(--secondGreen) 50%,
-    var(--mainGreen) 75%,
-    transparent);
+.fileInput {
+  display: none;
 }
 
 .icon {
@@ -193,11 +213,11 @@ header,
 }
 
 .modal {
-  margin: auto;
+  margin: var(--headerSize) auto;
   display: none;
   height: 50%;
-  left: 0;
-  top: 0;
+  /* left: 0;
+  top: 0; */
   background-color: var(--secondRed);
 }
 
@@ -230,7 +250,6 @@ header,
   display: none;
   margin: calc(var(--headerSize) * 1.25) auto;
   width: 95%;
-  background-color: rgba(128, 128, 128, 0.432);
 }
 
 .userTitle {
@@ -262,7 +281,7 @@ header,
 
 .container,
 .modal {
-  margin: calc(var(--headerSize) * 1.5) auto;
+  margin: calc(var(--headerSize) * 1.35) auto;
 }
 
 .container,

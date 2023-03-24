@@ -37,11 +37,8 @@ self.addEventListener("install", event => {
 				"/icons/favicon.png", // Favicon, IE and fallback for other browsers
 				"/icons/favicon-16x16.png", // Favicon, default
 				"/icons/favicon-32x32.png", // Favicon, Safari on Mac OS
-				"/icons/icon.svg", // icon as a svg, it's smaller and scalable
 				"/icons/logo.png", // full app logo
-				"/icons/logo.svg", // full app logo as a svg, it's smaller and scalable
 				"/icons/name.png", // app name logo,
-				"/icons/name.svg", // app name logo as a svg, it's smaller and scalable
 				"/icons/maskable_icon.png", // Favicon, maskable https://web.dev/maskable-icon
 				"/icons/maskable_icon_x48.png", // Favicon, maskable
 				"/icons/maskable_icon_x72.png", // Favicon, maskable
