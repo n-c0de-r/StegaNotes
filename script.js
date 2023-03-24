@@ -1,6 +1,6 @@
 let isValidUsername, isValidPassword, isConfirmed, wordList;
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js");
+  navigator.serviceWorker.register("/StegaNotes/sw.js");
 }
 
 fillHeader();
@@ -17,8 +17,8 @@ function fillHeader(name) {
   const header = document.querySelector("header");
   header.innerHTML = `
     <div class="header-content">
-      <img src="./icons/favicon.png" class="icon" alt="StegaNotes Icon">
-      <img src="./icons/name.png" class="name" alt="StegaNotes Name">
+      <img src="/StegaNotes/icons/favicon.png" class="icon" alt="StegaNotes Icon">
+      <img src="/StegaNotes/icons/name.png" class="name" alt="StegaNotes Name">
     </div>
   `;
 
