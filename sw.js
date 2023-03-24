@@ -7,11 +7,11 @@ self.addEventListener("install", event => {
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
 			return cache.addAll([
-				// "/",
-				// "index.html", // Main HTML file
-				// "script.js", // Main Javascript file
-				// "manifest.json", // Manifest file
-				// "style.css", // Main CSS file
+				"/",
+				"index.html", // Main HTML file
+				"script.js", // Main Javascript file
+				"manifest.json", // Manifest file
+				"style.css", // Main CSS file
 				"/fonts/OpenDyslexic3-Regular.ttf", // Font
 				"/icons/android-chrome-36x36.png", // Favicon, Android Chrome M39+ with 0.75 screen density
 				"/icons/android-chrome-48x48.png", // Favicon, Android Chrome M39+ with 1.0 screen density
