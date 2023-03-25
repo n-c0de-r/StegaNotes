@@ -128,7 +128,7 @@ function registerContainer() {
  */
 function fillNotes(array) {
   array.forEach(note => {
-    addNote(note.title, note.text, note.createdAt);
+    addNote(note.title, note.text, note.date);
   });
   const noteContainer = document.querySelector(".notes");
   noteContainer.style.display = 'block';
