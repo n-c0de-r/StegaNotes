@@ -49,7 +49,7 @@ function loginContainer() {
 
       <div class="button-group">
         <button class="loginButton">Sign In <span class="emoji">🔑</span></button>
-        <button class="registerButton">Register <span class="emoji">🦲</span></button>
+        <button class="registerButton">Register <span class="emoji">👤</span></button>
       </div>
       <label for="remember" style="text-align: center;">Remember me <input type="checkbox" class="checkbox" name="remember"></label>
     </form>
