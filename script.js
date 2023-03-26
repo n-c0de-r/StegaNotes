@@ -354,7 +354,6 @@ function newModal() {
     event.preventDefault();
     const key = prompt("Please enter your Keyword");
     if(key.trim().length === 0) return;
-    encodeButton.disabled = true;
     const text = document.querySelector(".text");
     text.value = encodeText(text.value, key);
     encodeButton.style.display = "none"
@@ -370,7 +369,6 @@ function newModal() {
       decodeButton.disabled = true;
       return;
     }
-    decodeButton.disabled = true;
     const text = document.querySelector(".text");
     text.value = decodeText(text.value, key);
     encodeButton.style.display = "inline-block"
@@ -447,7 +445,6 @@ function showNote(note) {
     event.preventDefault();
     const key = prompt("Please enter your Keyword");
     if(key.trim().length === 0) return;
-    encodeButton.disabled = true;
     const text = document.querySelector(".text");
     text.value = encodeText(text.value, key);
     encodeButton.style.display = "none";
@@ -463,7 +460,6 @@ function showNote(note) {
       decodeButton.disabled = true;
       return;
     }
-    decodeButton.disabled = true;
     const text = document.querySelector(".text");
     text.value = decodeText(text.value, key);
     encodeButton.style.display = "inline-block";
