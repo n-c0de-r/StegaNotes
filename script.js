@@ -48,8 +48,8 @@ function loginContainer() {
       <input type="password" class="password" name="password" pattern="^.*(?=.{1,}).*$" title="If the password is invalid, nothing will happen." placeholder="type here" required>
 
       <div class="button-group">
-        <button class="loginButton">Sign In 🔑</button>
-        <button class="registerButton">Register 🦲</button>
+        <button class="loginButton">Sign In <span class="emoji">🔑</span></button>
+        <button class="registerButton">Register <span class="emoji">🦲</span></button>
       </div>
       <label for="remember" style="text-align: center;">Remember me <input type="checkbox" class="checkbox" name="remember"></label>
     </form>
@@ -87,8 +87,8 @@ function registerContainer() {
       <input type="password" class="confirm" name="confirm" placeholder="1x each, min. 8 chars" required>
 
       <div class="button-group">
-        <button class="cancelButton">Cancel ❌</button>
-        <button type="submit" class="registerButton">Register ✔️</button>
+        <button class="cancelButton">Cancel <span class="emoji">❌</span></button>
+        <button type="submit" class="registerButton">Register <span class="emoji">✔️</span></button>
         ${/*<input type="file" accept="application/json" class="fileInput">
             <button class="pickButton" style="margin-top: 3vh;">Pick a local dictionary file</button>
             </input>*/""}
@@ -275,7 +275,7 @@ function addNote(inputTitle, inputText, inputDate, inputStatus) {
     date = `${inputDate.getFullYear()}-${MM}-${DD} ${hh}:${mm}:${ss}`;
 
     diff = Date.now() - Date.parse(inputDate);
-    star = (diff < 1000) ? " 🆕 " : "";
+    star = (diff < 1000) ? ` <span class="emoji">🆕</span> ` : "";
   }
 
   const noteButton = document.createElement('button');
@@ -333,9 +333,9 @@ function newModal() {
       <p><span class="status">🔒</span></p>
 
       <div class="button-group">
-        <button class="modalButton encodeButton">Encode 🔒</button>
-        <button class="modalButton decodeButton" style="display: none;">Decode 🔑</button>
-        <button class="modalButton saveButton">Store 💾</button>
+        <button class="modalButton encodeButton">Encode <span class="emoji">🔒</span></button>
+        <button class="modalButton decodeButton" style="display: none;">Decode <span class="emoji">🔑</span></button>
+        <button class="modalButton saveButton">Store <span class="emoji">💾</span></button>
       </div>
     </div>
   `;
@@ -424,10 +424,10 @@ function showNote(note) {
         <p><span class="status">🔒</span></p>
 
         <div class="button-group">
-          <button class="modalButton encodeButton">Encode 🔒</button>
-          <button class="modalButton decodeButton">Decode 🔑</button>
-          <button class="modalButton shareButton">Share 🔗</button>
-          <button class="modalButton deleteButton">Delete 🗑️</button>
+          <button class="modalButton encodeButton">Encode <span class="emoji">🔒</span></button>
+          <button class="modalButton decodeButton">Decode <span class="emoji">🔑</span></button>
+          <button class="modalButton shareButton">Share <span class="emoji">🔗</span></button>
+          <button class="modalButton deleteButton">Delete <span class="emoji">🗑️</span></button>
         </div>
       </div>
   `;
@@ -605,9 +605,9 @@ async function validateUsername() {
   isValidUsername = !usedName && username.length >= minLength && username.length <= maxLength;
 
   if (isValidUsername) {
-    userLabel.innerHTML = 'New Username' + ' ✔️';
+    userLabel.innerHTML = 'New Username' + ' <span class="emoji">✔️</span>';
   } else {
-    userLabel.innerHTML = 'New Username' + ' ❌';
+    userLabel.innerHTML = 'New Username' + ' <span class="emoji">❌</span>';
   }
 }
 
@@ -638,9 +638,9 @@ function validatePassword() {
     hasNumber;
 
   if (validPassword) {
-    passLabel.innerHTML = 'New Password' + ' ✔️';
+    passLabel.innerHTML = 'New Password' + ' <span class="emoji">✔️</span>';
   } else {
-    passLabel.innerHTML = 'New Password' + ' ❌';
+    passLabel.innerHTML = 'New Password' + ' <span class="emoji">❌</span>';
   }
 
   isValidPassword = validPassword;
@@ -662,9 +662,9 @@ function validateConfirm() {
   isConfirmed = password === confirm;
 
   if (isConfirmed) {
-    confLabel.innerHTML = 'Confirm Password' + ' ✔️';
+    confLabel.innerHTML = 'Confirm Password' + ' <span class="emoji">✔️</span>';
   } else {
-    confLabel.innerHTML = 'Confirm Password' + ' ❌';
+    confLabel.innerHTML = 'Confirm Password' + ' <span class="emoji">❌</span>';
   }
 }
 

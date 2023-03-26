@@ -99,7 +99,7 @@ button {
   width: 40%;
   background-color: var(--mainRed);
   cursor: pointer;
-  font-size: 1.5em;
+  font-size: 1.25em;
 }
 
 button:hover {
@@ -203,6 +203,10 @@ header,
   transform: scale(2);
 }
 
+.emoji {
+  font-size: 1.5em;
+}
+
 .fileInput {
   display: none;
 }
@@ -218,7 +222,7 @@ header,
 }
 
 .modalButton {
-  max-width: 30%;
+  max-width: 40%;
   min-width: 10%;
   background-color: var(--mainGreen);
 }
