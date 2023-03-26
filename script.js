@@ -329,7 +329,7 @@ function newModal() {
       <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
 
       <label for="noteText">Note Text (max. 200)</label>
-      <textarea class="text" name="noteText" placeholder="Enter original text" rows="4"></textarea>
+      <textarea class="text" name="noteText" placeholder="Enter original text" rows="4" autofocus></textarea>
       <p><span class="status">🔒</span></p>
 
       <div class="button-group">
