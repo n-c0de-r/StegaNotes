@@ -93,7 +93,6 @@
 
 body {
   background-color: var(--mainGreen);
-  min-height: 500px;
 }
 
 button {
@@ -293,6 +292,12 @@ header,
   z-index: 2;
 }
 
+.container,
+.notes {
+  margin: calc(var(--headerSize) * 2) auto 0 auto;
+  min-height: 500px;
+}
+
 .footer-content,
 .header-content {
   margin: 0 auto;
@@ -312,11 +317,6 @@ header,
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.container,
-.modal {
-  margin: calc(var(--headerSize) * 2) auto 0 auto;
 }
 
 .container,
