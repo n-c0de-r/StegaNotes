@@ -605,9 +605,9 @@ async function validateUsername() {
   isValidUsername = !usedName && username.length >= minLength && username.length <= maxLength;
 
   if (isValidUsername) {
-    userLabel.innerHTML = 'New Username' + ' <span class="emoji">✔️</span>';
+    userLabel.innerHTML = 'New Username' + ' ✔️';
   } else {
-    userLabel.innerHTML = 'New Username' + ' <span class="emoji">❌</span>';
+    userLabel.innerHTML = 'New Username' + ' ❌';
   }
 }
 
@@ -638,9 +638,9 @@ function validatePassword() {
     hasNumber;
 
   if (validPassword) {
-    passLabel.innerHTML = 'New Password' + ' <span class="emoji">✔️</span>';
+    passLabel.innerHTML = 'New Password' + ' ✔️';
   } else {
-    passLabel.innerHTML = 'New Password' + ' <span class="emoji">❌</span>';
+    passLabel.innerHTML = 'New Password' + ' ❌';
   }
 
   isValidPassword = validPassword;
@@ -662,9 +662,9 @@ function validateConfirm() {
   isConfirmed = password === confirm;
 
   if (isConfirmed) {
-    confLabel.innerHTML = 'Confirm Password' + ' <span class="emoji">✔️</span>';
+    confLabel.innerHTML = 'Confirm Password' + ' ✔️';
   } else {
-    confLabel.innerHTML = 'Confirm Password' + ' <span class="emoji">❌</span>';
+    confLabel.innerHTML = 'Confirm Password' + ' ❌';
   }
 }
 
