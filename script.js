@@ -48,8 +48,8 @@ function loginContainer() {
       <input type="password" class="password" name="password" pattern="^.*(?=.{1,}).*$" title="If the password is invalid, nothing will happen." placeholder="type here" required>
 
       <div class="button-group">
-        <button class="loginButton">Sign In <span class="emoji">🔑</span></button>
-        <button class="registerButton">Register <span class="emoji">👤</span></button>
+        <button class="loginButton">Sign In<p>🔑</p></button>
+        <button class="registerButton">Register<p>👤</p></button>
       </div>
       <label for="remember" style="text-align: center;">Remember me <input type="checkbox" class="checkbox" name="remember"></label>
     </form>
@@ -87,8 +87,8 @@ function registerContainer() {
       <input type="password" class="confirm" name="confirm" placeholder="1x each, min. 8 chars" required>
 
       <div class="button-group">
-        <button class="cancelButton">Cancel <span class="emoji">❌</span></button>
-        <button type="submit" class="registerButton">Register <span class="emoji">✔️</span></button>
+        <button class="cancelButton">Cancel<p>❌</p></button>
+        <button type="submit" class="registerButton">Register<p>✔️</p></button>
         ${/*<input type="file" accept="application/json" class="fileInput">
             <button class="pickButton" style="margin-top: 3vh;">Pick a local dictionary file</button>
             </input>*/""}
@@ -275,7 +275,7 @@ function addNote(inputTitle, inputText, inputDate, inputStatus) {
     date = `${inputDate.getFullYear()}-${MM}-${DD} ${hh}:${mm}:${ss}`;
 
     diff = Date.now() - Date.parse(inputDate);
-    star = (diff < 1000) ? ` <span class="emoji">🆕</span> ` : "";
+    star = (diff < 1000) ? ` <span>🆕</span> ` : "";
   }
 
   const noteButton = document.createElement('button');
@@ -328,14 +328,14 @@ function newModal() {
       <label for="noteTitle">Note Title</label>
       <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
 
-      <label for="noteText">Note Text (max. 200 chars)</label>
+      <label for="noteText">Note Text (max. 200)</label>
       <textarea class="text" name="noteText" placeholder="Enter original text" rows="4"></textarea>
       <p><span class="status">🔒</span></p>
 
       <div class="button-group">
-        <button class="modalButton encodeButton">Encode <span class="emoji">🔒</span></button>
-        <button class="modalButton decodeButton" style="display: none;">Decode <span class="emoji">🔑</span></button>
-        <button class="modalButton saveButton">Store <span class="emoji">💾</span></button>
+        <button class="modalButton encodeButton">Encode<p>🔒</p></button>
+        <button class="modalButton decodeButton" style="display: none;">Decode<p>🔑</p></button>
+        <button class="modalButton saveButton">Store<p>💾</p></button>
       </div>
     </div>
   `;
@@ -424,10 +424,10 @@ function showNote(note) {
         <p><span class="status">🔒</span></p>
 
         <div class="button-group">
-          <button class="modalButton encodeButton">Encode <span class="emoji">🔒</span></button>
-          <button class="modalButton decodeButton">Decode <span class="emoji">🔑</span></button>
-          <button class="modalButton shareButton">Share <span class="emoji">🔗</span></button>
-          <button class="modalButton deleteButton">Delete <span class="emoji">🗑️</span></button>
+          <button class="modalButton encodeButton">Encode<p>🔒</p></button>
+          <button class="modalButton decodeButton">Decode<p>🔑</p></button>
+          <button class="modalButton shareButton">Share<p>🔗</p></button>
+          <button class="modalButton deleteButton">Delete<p>🗑️</p></button>
         </div>
       </div>
   `;
@@ -514,11 +514,7 @@ function shareNote(note) {
       date: note.date,
       status: note.status
     })
-      .then(() => console.log('Successfully shared'))
-      .catch((error) => console.log('Error sharing:', error));
-  } else {
-    console.log('Web Share API not supported');
-  }
+  } 
 }
 
 /***Login functions***/
@@ -901,7 +897,7 @@ function encodeText(text, key) {
     }
     hiddenWords[i] = word;
   }
-  
+
   return hiddenWords.join(" ");
 }
 
@@ -956,7 +952,10 @@ function pickWord(char, value) {
  * @returns The random integer
  */
 function getRandomInt(min, max) {
-  const range = max - min;
+  let range = max - min;
+  if (range <= 0) {
+    return;
+  }
   const bytesNeeded = Math.ceil(Math.log2(range) / 8);
   const randomBytes = new Uint8Array(bytesNeeded);
   let randomInt;
@@ -968,7 +967,7 @@ function getRandomInt(min, max) {
       randomInt |= randomBytes[i] << (i * 8);
     }
     randomInt = randomInt % range;
-  } while (randomInt >= range);
+  } while (randomInt >= range || !isFinite(randomInt));
   
   return randomInt + min;
 }

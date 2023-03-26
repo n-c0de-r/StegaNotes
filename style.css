@@ -128,6 +128,11 @@ label {
   text-align: left;
 }
 
+p {
+  margin: 0;
+  padding: 0;
+}
+
 section {
   display: flex;
   flex-direction: column;
@@ -203,10 +208,6 @@ header,
   transform: scale(2);
 }
 
-.emoji {
-  font-size: 1.5em;
-}
-
 .fileInput {
   display: none;
 }
@@ -222,7 +223,7 @@ header,
 }
 
 .modalButton {
-  max-width: 40%;
+  max-width: 30%;
   min-width: 10%;
   background-color: var(--mainGreen);
 }
