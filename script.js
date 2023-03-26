@@ -87,7 +87,7 @@ function registerContainer() {
       <input type="password" class="confirm" name="confirm" placeholder="1x each, min. 8 chars" required>
 
       <div class="button-group">
-        <button class="cancelButton">Cancel<p>❌</p></button>
+        <button class="cancelButton"><p>Cancel</p><p>❌</p></button>
         <button type="submit" class="registerButton">Register<p>✔️</p></button>
         ${/*<input type="file" accept="application/json" class="fileInput">
             <button class="pickButton" style="margin-top: 3vh;">Pick a local dictionary file</button>
