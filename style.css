@@ -93,6 +93,7 @@
 
 body {
   background-color: var(--mainGreen);
+  min-height: 500px;
 }
 
 button {
@@ -323,5 +324,4 @@ header,
 .footer-content,
 .notes {
   min-width: 300px;
-  min-height: 500px;
 }
