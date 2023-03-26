@@ -200,6 +200,7 @@ header,
 
 .checkbox {
   width: 0.5em;
+  height: 0.5em;
   margin: 0;
   transform: scale(2);
 }
@@ -322,4 +323,5 @@ header,
 .footer-content,
 .notes {
   min-width: 300px;
+  min-height: 500px;
 }

@@ -48,8 +48,8 @@ function loginContainer() {
       <input type="password" class="password" name="password" pattern="^.*(?=.{1,}).*$" title="If the password is invalid, nothing will happen." placeholder="type here" required>
 
       <div class="button-group">
-        <button class="loginButton">Sign In<p>🔑</p></button>
-        <button class="registerButton">Register<p>👤</p></button>
+        <button class="loginButton"><p>Sign In</p><p>🔑</p></button>
+        <button class="registerButton"><p>Register</p><p>👤</p></button>
       </div>
       <label for="remember" style="text-align: center;">Remember me <input type="checkbox" class="checkbox" name="remember"></label>
     </form>
@@ -88,7 +88,7 @@ function registerContainer() {
 
       <div class="button-group">
         <button class="cancelButton"><p>Cancel</p><p>❌</p></button>
-        <button type="submit" class="registerButton">Register<p>✔️</p></button>
+        <button type="submit" class="registerButton"><p>Register</p><p>✔️</p></button>
         ${/*<input type="file" accept="application/json" class="fileInput">
             <button class="pickButton" style="margin-top: 3vh;">Pick a local dictionary file</button>
             </input>*/""}
@@ -341,9 +341,9 @@ function newModal() {
       <p><span class="status">🔒</span></p>
 
       <div class="button-group">
-        <button class="modalButton encodeButton">Encode<p>🔒</p></button>
-        <button class="modalButton decodeButton" style="display: none;">Decode<p>🔑</p></button>
-        <button class="modalButton saveButton">Store<p>💾</p></button>
+        <button class="modalButton encodeButton"><p>Encode</p><p>🔒</p></button>
+        <button class="modalButton decodeButton" style="display: none;"><p>Decode</p><p>🔑</p></button>
+        <button class="modalButton saveButton"><p>Store</p><p>💾</p></button>
       </div>
     </div>
   `;
@@ -432,7 +432,7 @@ function decoderModal() {
       <input type="text" class="key" name="noteKey" placeholder="Enter Key">
 
       <div class="button-group">
-        <button class="modalButton decodeButton">Decode<p>🔑</p></button>
+        <button class="modalButton decodeButton"><p>Decode</p><p>🔑</p></button>
       </div>
     </div>
   `;
@@ -474,10 +474,10 @@ function showNote(note) {
         <p><span class="status">🔒</span></p>
 
         <div class="button-group">
-          <button class="modalButton encodeButton">Encode<p>🔒</p></button>
-          <button class="modalButton decodeButton">Decode<p>🔑</p></button>
-          <button class="modalButton shareButton">Share<p>🔗</p></button>
-          <button class="modalButton deleteButton">Delete<p>🗑️</p></button>
+          <button class="modalButton encodeButton"><p>Encode</p><p>🔒</p></button>
+          <button class="modalButton decodeButton"><p>Decode</p><p>🔑</p></button>
+          <button class="modalButton shareButton"><p>Share</p><p>🔗</p></button>
+          <button class="modalButton deleteButton"><p>Delete</p><p>🗑️</p></button>
         </div>
       </div>
   `;
