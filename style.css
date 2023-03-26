@@ -1,17 +1,17 @@
 :root {
-  --mainGreen: #6dca4dff;
-  --mainRed: #ed1c24ff;
-  --secondGreen: #0d9900ff;
-  --secondRed: #992700ff;
+  --mainGreen: limegreen;
+  --mainRed: firebrick;
+  --secondGreen: darkgreen;
+  --secondRed: darkred;
   --buttonRadius: 10px;
-  --headerSize: 10vh;
+  --headerSize: 8vh;
   --shadow: 2px 2px 7px rgba(0, 0, 0, 0.6);
   --gradientColors: black 10%, var(--secondGreen) 40%, var(--mainGreen) 70%, transparent;
 }
 
 @font-face {
   font-family: "OpenDyslexic3";
-  src: url("./fonts/OpenDyslexic3-Regular.ttf") format("truetype");
+  src: url("/StegaNotes/fonts/OpenDyslexic3-Regular.ttf") format("truetype");
   font-display: swap;
 }
 
@@ -29,12 +29,12 @@
 
   .footer-content>a {
     display: block;
-    margin-top: calc(var(--headerSize) * 3/4);
+    margin-top: calc(var(--headerSize) / 2 );
     text-shadow: var(--shadow);
   }
 
   .footer {
-    height: calc(var(--headerSize) * 2);
+    height: calc(var(--headerSize) * 1.5);
   }
 
   .notes {
@@ -99,6 +99,7 @@ button {
   width: 40%;
   background-color: var(--mainRed);
   cursor: pointer;
+  font-size: 1.5em;
 }
 
 button:hover {
@@ -183,25 +184,23 @@ header,
 }
 
 .addButton {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   bottom: 2rem;
   right: 2rem;
   border-radius: 50%;
   z-index: 2;
 }
 
-.zoomIn {
-  animation: animatezoom 0.3s forwards;
-}
-
-.zoomOut {
-  animation: animatezoom 0.3s reverse;
-}
-
 .button-group {
   margin: 5%;
   text-align: center;
+}
+
+.checkbox {
+  width: 0.5em;
+  margin: 0;
+  transform: scale(2);
 }
 
 .fileInput {
@@ -213,15 +212,14 @@ header,
 }
 
 .modal {
-  margin: var(--headerSize) auto;
   display: none;
   height: 50%;
-  /* left: 0;
-  top: 0; */
   background-color: var(--secondRed);
 }
 
 .modalButton {
+  max-width: 30%;
+  min-width: 10%;
   background-color: var(--mainGreen);
 }
 
@@ -230,6 +228,7 @@ header,
 }
 
 .modalButton.close {
+  max-width: 2rem;
   width: 2rem;
   height: 2rem;
   float: right;
@@ -252,10 +251,30 @@ header,
   width: 95%;
 }
 
+.smallFont{
+  font-size: 0.5em;
+}
+
+.status {
+  position: absolute;
+  margin: 0 5%;
+  padding: 0;
+  right: 0;
+  display: none;
+}
+
 .userTitle {
   width: 85%;
   display: inline-block;
   vertical-align: middle;
+}
+
+.zoomIn {
+  animation: animatezoom 0.3s forwards;
+}
+
+.zoomOut {
+  animation: animatezoom 0.3s reverse;
 }
 
 .footer-content,
@@ -281,7 +300,7 @@ header,
 
 .container,
 .modal {
-  margin: calc(var(--headerSize) * 1.35) auto;
+  margin: calc(var(--headerSize) * 2) auto 0 auto;
 }
 
 .container,

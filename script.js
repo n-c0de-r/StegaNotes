@@ -7,6 +7,8 @@ fillHeader();
 loginContainer();
 fillFooter();
 
+startUp();
+
 // Content functions //
 
 /**
@@ -38,18 +40,19 @@ function fillHeader(name) {
 function loginContainer() {
   const container = document.querySelector(".page");
   container.innerHTML = `
-    <div class="container">
-      <label for="username" id="username-label">Username</label>
-      <input type="text" class="username" name="username" title="If the username is invalid, nothing will happen." placeholder="type here" required>
+    <form class="container">
+      <label for="username" id="username-label" autofocus>Username</label>
+      <input type="text" class="username" name="username" pattern="^.*(?=.{1,}).*$" title="If the username is invalid, nothing will happen." placeholder="type here" required>
 
       <label for="password" id="password-label">Password</label>
-      <input type="password" class="password" name="password" title="If the password is invalid, nothing will happen." placeholder="type here" required>
+      <input type="password" class="password" name="password" pattern="^.*(?=.{1,}).*$" title="If the password is invalid, nothing will happen." placeholder="type here" required>
 
       <div class="button-group">
-        <button class="loginButton">Login</button>
-        <button class="registerButton">Register</button>
+        <button class="loginButton">Sign In 🔑</button>
+        <button class="registerButton">Register 🦲</button>
       </div>
-    </div>
+      <label for="remember" style="text-align: center;">Remember me <input type="checkbox" class="checkbox" name="remember"></label>
+    </form>
   `;
 
   const loginButton = document.querySelector(".loginButton");
@@ -73,25 +76,31 @@ function registerContainer() {
 
   const container = document.querySelector(".page");
   container.innerHTML = `
-    <div class="container">
+    <form class="container">
       <label for="username" id="username-label">New Username</label>
-      <input type="text" class="username" name="username" pattern="^.*(?=.{4,8}).*$" title="The username must be 4 to 8 characters long." placeholder="min: 4, max: 8" required>
+      <input type="text" class="username" name="username" pattern="^.*(?=.{4,12}).*$" title="The username must be 4 to 12 characters long." placeholder="min: 4, max: 12" required autofocus>
 
       <label for="password" id="password-label">New Password</label>
-      <input type="password" class="password" name="password" pattern="^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?:{}|<>]).*$" title="The password must be at least 8 characters long, have at least 1 of each case letter, a number and a special character." placeholder="A-Z, a-z, 0-9, symbol" required>
+      <input type="password" class="password" name="password" pattern="^.*(?=.{8,})(?=.*[a-zA-Z0-9])(?=.*[!@#$%^&*(),.?:{}|<>]).*$" title="The password must be at least 8 characters long,\nhave at least 1 of each case letter,\na number and a special character." placeholder="A-Z, a-z, 0-9, symbol" required>
 
       <label for="password" id="confirm-label">Confirm Password</label>
       <input type="password" class="confirm" name="confirm" placeholder="1x each, min. 8 chars" required>
 
       <div class="button-group">
-        <button class="registerButton">Register</button>
-        <button class="cancelButton">Cancel</button>
-        <input type="file" accept="application/json" class="fileInput">
-         <button class="pickButton" style="margin-top: 3vh;">Pick a Dictionary</button>
-        </input>
+        <button class="cancelButton">Cancel ❌</button>
+        <button type="submit" class="registerButton">Register ✔️</button>
+        ${/*<input type="file" accept="application/json" class="fileInput">
+            <button class="pickButton" style="margin-top: 3vh;">Pick a local dictionary file</button>
+            </input>*/""}
       </div>
-    </div>
+    </form>
   `;
+
+  const registerForm = document.querySelector(".container");
+  registerForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    registerUser();
+  });
 
   const usernameInput = document.querySelector(".username");
   usernameInput.addEventListener("keyup", validateUsername);
@@ -103,23 +112,20 @@ function registerContainer() {
   const confirmInput = document.querySelector(".confirm");
   confirmInput.addEventListener("keyup", validateConfirm);
 
-  const registerButton = document.querySelector(".registerButton");
-  registerButton.addEventListener("click", registerUser);
-
   const cancelButton = document.querySelector(".cancelButton");
   cancelButton.addEventListener("click", function() {
     loginContainer();
     fillFooter();
   });
 
-  const fileInput = document.querySelector(".fileInput");
-  fileInput.addEventListener("change", readDictionary);
+  // const fileInput = document.querySelector(".fileInput");
+  // fileInput.addEventListener("change", readDictionary);
   
-  const pickButton = document.querySelector(".pickButton");
-  pickButton.addEventListener("click", function(event) {
-    event.preventDefault();
-    fileInput.click();
-  });
+  // const pickButton = document.querySelector(".pickButton");
+  // pickButton.addEventListener("click", function(event) {
+  //   event.preventDefault();
+  //   fileInput.click();
+  // });
 }
 
 /**
@@ -128,7 +134,7 @@ function registerContainer() {
  */
 function fillNotes(array) {
   array.forEach(note => {
-    addNote(note.title, note.text, note.date);
+    addNote(note.title, note.text, note.date, note.state);
   });
   const noteContainer = document.querySelector(".notes");
   noteContainer.style.display = 'block';
@@ -248,35 +254,46 @@ function serializeSVG(svg) {
  * Adds a note to the page.
  * @param {string} inputTitle Title of the note
  * @param {string} inputText Text of the note
+ * @param {string} inputDate Date of the note
+ * @param {string} inputStatus Text of the note
  */
-async function addNote(inputTitle, inputText, inputDate) {
+function addNote(inputTitle, inputText, inputDate, inputStatus) {
   const noteContainer = document.querySelector(".notes");
   let newTitle = inputTitle
   const notesNr = noteContainer.childElementCount;
-  if(inputTitle === undefined || inputTitle.length === 0) newTitle = "New Note #" + (notesNr+1);
+  if(inputTitle === undefined || inputTitle.length === 0) newTitle = "Note #" + (notesNr+1);
+
+  let diff = 0, star = "";
 
   let date = inputDate;
-  if(inputDate === undefined) {
-    const d = new Date();
-    date = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}, ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
-  }
-  
+  if(inputDate instanceof Date) {
+    const MM = (inputDate.getMonth()<10?'0':'')+inputDate.getMonth();
+    const DD = (inputDate.getDate()<10?'0':'')+inputDate.getDate();
+    const hh = (inputDate.getHours()<10?'0':'')+inputDate.getHours();
+    const mm = (inputDate.getMinutes()<10?'0':'')+inputDate.getMinutes();
+    const ss = (inputDate.getSeconds()<10?'0':'')+inputDate.getSeconds();
+    date = `${inputDate.getFullYear()}-${MM}-${DD} ${hh}:${mm}:${ss}`;
 
-  let noteButton = document.createElement('button');
+    diff = Date.now() - Date.parse(inputDate);
+    star = (diff < 1000) ? " 🆕 " : "";
+  }
+
+  const noteButton = document.createElement('button');
   noteButton.classList.add('note');
   noteButton.id = newTitle;
-  noteButton.innerHTML = `${newTitle}`;
+  noteButton.innerHTML = `${star}${newTitle}${star}`;
   noteButton.dataset.title = newTitle;
   noteButton.dataset.text = inputText;
   noteButton.dataset.date = date;
+  noteButton.dataset.state = inputStatus;
 
-  storeNote({title: newTitle, text: inputText, createdAt: date});
-  
   noteButton.addEventListener("click", function(event) {
     showNote(event.target.dataset);
   });
 
-  noteContainer.appendChild(noteButton);
+  noteContainer.prepend(noteButton);
+
+  return {title: newTitle, text: inputText, date: date, state: inputStatus};
 }
 
 /**
@@ -313,11 +330,12 @@ function newModal() {
 
       <label for="noteText">Note Text (max. 200 chars)</label>
       <textarea class="text" name="noteText" placeholder="Enter original text" rows="4"></textarea>
+      <p><span class="status">🔒</span></p>
 
       <div class="button-group">
-        <button class="modalButton encodeButton">Encrypt</button>
-        <button class="modalButton decodeButton" style="display: none;">Decrypt</button>
-        <button class="modalButton saveButton">Save</button>
+        <button class="modalButton encodeButton">Encode 🔒</button>
+        <button class="modalButton decodeButton" style="display: none;">Decode 🔑</button>
+        <button class="modalButton saveButton">Store 💾</button>
       </div>
     </div>
   `;
@@ -338,59 +356,9 @@ function newModal() {
     if(key.trim().length === 0) return;
     const text = document.querySelector(".text");
     text.value = encodeText(text.value, key);
-  });
-
-  const saveButton = document.querySelector(".saveButton");
-  saveButton.disabled = true;
-  saveButton.addEventListener("click", function(event) {
-    event.preventDefault();
-    const text = document.querySelector(".text").value;
-    if(text.length === 0) return;
-    const title = document.querySelector(".title").value;
-    addNote(title, text);
-    closeModal();
-  });
-
-  const inputText = document.querySelector(".text");
-  inputText.addEventListener("keyup", function(event) {
-    if(inputText.value.trim().length === 0 || inputText.value.trim().length > 200) {
-      encodeButton.disabled = true;
-      saveButton.disabled = true;
-    } else {
-      encodeButton.disabled = false;
-      saveButton.disabled = false;
-    }
-  });
-}
-
-/**
- * Displays the note modal
- * @param {object} note The note to display.
- */
-function showNote(note) {
-  document.querySelector(".notes").style.display = "none";
-  const newContainer = document.querySelector('.page');
-  newContainer.innerHTML=`
-    <div class="modal zoomIn">
-      <button class="modalButton close" title="Close Modal">&times;</button>
-      <label for="noteTitle">${note.title}</label>
-      <textarea class="text" name="noteText" rows="6" readonly>${note.text}</textarea>
-      
-      <label for="noteTime">Added at ${note.date}</label>
-
-      <div class="button-group">
-        <button class="modalButton decodeButton">Decrypt</button>
-        <button class="modalButton deleteButton">Delete</button>
-      </div>
-    </div>
-  `;
-
-  document.querySelector('.modal').style.display = 'block';
-
-  const closeButton = document.querySelector(".close");
-  closeButton.addEventListener("click", function(event) {
-    event.preventDefault();
-    closeModal();
+    encodeButton.style.display = "none"
+    decodeButton.style.display = "inline-block";
+    document.querySelector(".status").style.display = "block";
   });
 
   const decodeButton = document.querySelector(".decodeButton");
@@ -403,6 +371,116 @@ function showNote(note) {
     }
     const text = document.querySelector(".text");
     text.value = decodeText(text.value, key);
+    encodeButton.style.display = "inline-block"
+    decodeButton.style.display = "none";
+    document.querySelector(".status").style.display = "none";
+  });
+
+  const saveButton = document.querySelector(".saveButton");
+  saveButton.disabled = true;
+  saveButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const text = document.querySelector(".text").value;
+    if(text.length === 0) return;
+    const title = document.querySelector(".title").value;
+    const status = document.querySelector(".status").style.display;
+    const note = addNote(title, text, new Date(), status);
+    storeNote(note);
+    closeModal();
+  });
+
+  const inputText = document.querySelector(".text");
+  inputText.addEventListener("keyup", function(event) {
+    if(inputText.value.trim().length === 0 || inputText.value.trim().length > 200) {
+      saveButton.disabled = true;
+        encodeButton.disabled = true;
+        decodeButton.disabled = true;
+    } else {
+      saveButton.disabled = false;
+      if (wordList === undefined) {
+        encodeButton.disabled = true;
+        decodeButton.disabled = true;
+      } else {
+        encodeButton.disabled = false;
+        decodeButton.disabled = false;
+      }
+    }
+  });
+}
+
+/**
+ * Displays the note modal
+ * @param {object} note The note to display.
+ */
+function showNote(note) {
+  document.querySelector(".notes").style.display = "none";
+  const newContainer = document.querySelector('.page');
+  newContainer.innerHTML=`
+      <div class="modal zoomIn">
+        <button class="modalButton close" title="Close Modal">&times;</button>
+        <label for="noteTitle">${note.title}</label>
+        <textarea class="text" name="noteText" rows="4" readonly>${note.text}</textarea>
+        <label for="noteTime" class="smallFont">${note.date}</label>
+        <p><span class="status">🔒</span></p>
+
+        <div class="button-group">
+          <button class="modalButton encodeButton">Encode 🔒</button>
+          <button class="modalButton decodeButton">Decode 🔑</button>
+          <button class="modalButton shareButton">Share 🔗</button>
+          <button class="modalButton deleteButton">Delete 🗑️</button>
+        </div>
+      </div>
+  `;
+
+  document.querySelector('.modal').style.display = 'block';
+
+  const closeButton = document.querySelector(".close");
+  closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    closeModal();
+  });
+
+  const encodeButton = document.querySelector(".encodeButton");
+  encodeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const key = prompt("Please enter your Keyword");
+    if(key.trim().length === 0) return;
+    const text = document.querySelector(".text");
+    text.value = encodeText(text.value, key);
+    encodeButton.style.display = "none";
+    decodeButton.style.display = "inline-block";
+    document.querySelector(".status").style.display = "block";
+  });
+
+  const decodeButton = document.querySelector(".decodeButton");
+  decodeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const key = prompt("Please enter your Keyword");
+    if (key.trim().length === 0) {
+      decodeButton.disabled = true;
+      return;
+    }
+    const text = document.querySelector(".text");
+    text.value = decodeText(text.value, key);
+    encodeButton.style.display = "inline-block";
+    decodeButton.style.display = "none";
+    document.querySelector(".status").style.display = "none";
+  });
+  
+  const state = note.state === "";
+  encodeButton.style.display = `${(state) ? "inline-block" : "none"}`;
+  decodeButton.style.display = `${(state) ? "none" : "inline-block"}`;
+  document.querySelector('.status').style.display = `${(state) ? "none" : "block"}`;
+
+  if (wordList === undefined) {
+    encodeButton.disabled = true;
+    decodeButton.disabled = true;
+  }
+
+  const shareButton = document.querySelector(".shareButton");
+  shareButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    shareNote(note);
   });
 
   const deleteButton = document.querySelector(".deleteButton");
@@ -424,6 +502,25 @@ function removeNote(title) {
   deleteNote(title);
 }
 
+/**
+ * Shares a note via the built-in web API.
+ * @param {object} note The note object to share.
+ */
+function shareNote(note) {
+  if (navigator.share) {
+    navigator.share({
+      title: note.title,
+      text: note.text,
+      date: note.date,
+      status: note.status
+    })
+      .then(() => console.log('Successfully shared'))
+      .catch((error) => console.log('Error sharing:', error));
+  } else {
+    console.log('Web Share API not supported');
+  }
+}
+
 /***Login functions***/
 
 /**
@@ -435,7 +532,7 @@ async function login(username, password) {
   const usedName = await existsDB(username);
 
   if (username.length > 0 && usedName) {
-    const request = indexedDB.open(username, 1);
+    const request = indexedDB.open(username, 2);
 
     request.onsuccess = function() {
       const db = request.result;
@@ -462,11 +559,19 @@ async function login(username, password) {
       };
 
       langRequest.onsuccess = function() {
-        wordList = langRequest.result.words;
+        if(wordList === undefined) wordList = langRequest.result.words;
       };
     };
   } else {
     alert(`Entered credentials seem to be wrong!\nTry again.`);
+  }
+
+  if (document.querySelector(".checkbox").checked === true) {
+    localStorage.setItem("username", document.querySelector(".username").value);
+    localStorage.setItem("password", document.querySelector(".password").value);
+    localStorage.setItem("remember", document.querySelector(".checkbox").checked);
+  } else {
+    localStorage.clear();
   }
 }
 
@@ -483,11 +588,11 @@ function registerUser() {
 
 /**
  * Validates if a username is already used for a database.
- * And also if it is of the correct length of 4-8 chars.
+ * And also if it is of the correct length of 4-12 chars.
  */
 async function validateUsername() {
   const minLength = 4;
-  const maxLength = 8;
+  const maxLength = 12;
   const username = document.querySelector(".username").value;
   const userLabel = document.querySelector("#username-label");
 
@@ -596,7 +701,7 @@ async function openDatabase(username, password) {
   const saltHash = generateSalt();
   const passHash = await hashPassword(password, saltHash);
 
-  const request = indexedDB.open(username, 1);
+  const request = indexedDB.open(username, 2);
 
   request.onupgradeneeded = function() {
     const db = request.result;
@@ -614,6 +719,13 @@ async function openDatabase(username, password) {
 
     const newLogin = { user: username, pass: passHash, salt: saltHash };
     loginsStore.add(newLogin);
+
+    if(wordList === undefined) {
+      if(confirm("Do you want to download a default English dictionary? (ca. 2.5MB)\n"+
+      "Without this you won't be able to use the steganography core functions.")) {
+        loadDictionary(username);
+      }
+    }
 
     tsxLogins.oncomplete = function() {
       alert(`User \"${username}\" successfully created.\n
@@ -645,7 +757,7 @@ function getNotes(db) {
 function storeNote(note) {
   const altText = document.querySelector(".userTitle").getAttribute('alt');
   const name = altText.substring(0, altText.indexOf("'"));
-  const request = indexedDB.open(name, 1);
+  const request = indexedDB.open(name, 2);
 
   request.onsuccess = async function() {
     const db = request.result;
@@ -662,7 +774,7 @@ function storeNote(note) {
 function deleteNote(title) {
   const altText = document.querySelector(".userTitle").getAttribute('alt');
   const name = altText.substring(0, altText.indexOf("'"));
-  const request = indexedDB.open(name, 1);
+  const request = indexedDB.open(name, 2);
 
   request.onsuccess = async function() {
     const db = request.result;
@@ -673,13 +785,27 @@ function deleteNote(title) {
 }
 
 /**
+ * Loads the default english dictionary
+ * @param {string} name Database name to store the dictionary at
+ */
+function loadDictionary(name) {
+  fetch("https://raw.githubusercontent.com/n-c0de-r/StegaNotes/main/eng.json")
+    .then(response => response.json())
+    .then(data => {
+      storeDictionary(name, Object.keys(data)[0], Object.values(data)[0]);
+    })
+    .catch(error => {
+      console.error("Error fetching JSON:", error);
+    });
+}
+
+/**
  * Reads in a JSON file and stores it in the database.
- * @param {file} event The File event
+ * @param {Event} event The File event
  */
 function readDictionary(event) {
   const name = document.querySelector(".username").value;
   const file = event.target.files[0];
-  const lang = file.name.substring(0, file.name.lastIndexOf('.'));
 
   const reader = new FileReader();
   reader.readAsText(file);
@@ -687,8 +813,7 @@ function readDictionary(event) {
   reader.onload = () => {
       const readFile = reader.result;
       const obj = JSON.parse(readFile);
-      wordList = Object.values(obj)[0];
-      storeDictionary(name, lang, words);
+      storeDictionary(name, Object.keys(obj)[0], Object.values(obj)[0]);
   };
 }
 
@@ -699,7 +824,8 @@ function readDictionary(event) {
  * @param {array} words Array of words.
  */
 function storeDictionary(name, lang, words) {
-  const request = indexedDB.open(name, 1);
+  wordList = words;
+  const request = indexedDB.open(name, 2);
 
   request.onsuccess = async function() {
     const db = request.result;
@@ -776,7 +902,6 @@ function encodeText(text, key) {
     hiddenWords[i] = word;
   }
   
-  const encodeButton = document.querySelector(".encodeButton").disabled = true;
   return hiddenWords.join(" ");
 }
 
@@ -846,4 +971,19 @@ function getRandomInt(min, max) {
   } while (randomInt >= range);
   
   return randomInt + min;
+}
+
+/**
+ * Function checking if there a re stored credentials in local storage.
+ * If so, get them. If the remember button is unchecked clear it all.
+ */
+function startUp() {
+  if (localStorage.getItem("username") === null || document.querySelector(".checkbox").checked === true) {
+    localStorage.clear();
+    return;
+  }
+
+  document.querySelector(".username").value = localStorage.getItem("username");
+  document.querySelector(".password").value = localStorage.getItem("password");
+  document.querySelector(".checkbox").checked = localStorage.getItem("remember");
 }
