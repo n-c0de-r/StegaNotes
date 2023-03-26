@@ -1,6 +1,6 @@
 let isValidUsername, isValidPassword, isConfirmed, wordList;
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/StegaNotes/sw.js");
+  navigator.serviceWorker.register("./sw.js");
 }
 
 fillHeader();
@@ -19,8 +19,8 @@ function fillHeader(name) {
   const header = document.querySelector("header");
   header.innerHTML = `
     <div class="header-content">
-      <img src="/StegaNotes/icons/favicon.png" class="icon" alt="StegaNotes Icon">
-      <img src="/StegaNotes/icons/name.png" class="name" alt="StegaNotes Name">
+      <img src="./icons/favicon.png" class="icon" alt="StegaNotes Icon">
+      <img src="./icons/name.png" class="name" alt="StegaNotes Name">
     </div>
   `;
 
@@ -305,12 +305,20 @@ function closeModal() {
   newContainer.innerHTML=`
   <div class="button-group">
     <button class="addButton">+</button>
+    <button class="decoderButton">🔑</button>
   </div>`;
 
   const addButton = document.querySelector(".addButton");
   addButton.addEventListener("click", function(event) {
     event.preventDefault();
     newModal();
+  });
+
+
+  const decoderButton = document.querySelector(".decoderButton");
+  decoderButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    decoderModal();
   });
 
   newContainer.style.display = 'block';
@@ -405,6 +413,48 @@ function newModal() {
         decodeButton.disabled = false;
       }
     }
+  });
+}
+
+/**
+ * Displays the new note modal.
+ */
+function decoderModal() {
+  document.querySelector(".notes").style.display = "none";
+  const newContainer = document.querySelector('.page');
+  newContainer.innerHTML=`
+    <div class="modal zoomIn">
+      <button class="modalButton close" title="Close Modal">&times;</button>
+      <label for="noteText">Encoded Text</label>
+      <textarea class="text" name="noteText" placeholder="Paste encoded text here" rows="4" autofocus></textarea>
+      
+      <label for="noteKey">Note Key</label>
+      <input type="text" class="key" name="noteKey" placeholder="Enter Key">
+
+      <div class="button-group">
+        <button class="modalButton decodeButton">Decode<p>🔑</p></button>
+      </div>
+    </div>
+  `;
+
+  document.querySelector('.modal').style.display = 'block';
+
+  const closeButton = document.querySelector(".close");
+  closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    closeModal();
+  });
+
+  const decodeButton = document.querySelector(".decodeButton");
+  decodeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const key = document.querySelector(".key").value;
+    if (key.trim().length === 0) {
+      decodeButton.disabled = true;
+      return;
+    }
+    const text = document.querySelector(".text");
+    text.value = decodeText(text.value, key);
   });
 }
 
@@ -785,7 +835,7 @@ function deleteNote(title) {
  * @param {string} name Database name to store the dictionary at
  */
 function loadDictionary(name) {
-  fetch("https://raw.githubusercontent.com/n-c0de-r/StegaNotes/main/eng.json")
+  fetch("https://raw.githubusercontent.com/n-c0de-r./main/eng.json")
     .then(response => response.json())
     .then(data => {
       storeDictionary(name, Object.keys(data)[0], Object.values(data)[0]);

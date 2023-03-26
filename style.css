@@ -184,17 +184,13 @@ textarea {
 
 footer,
 header,
-.addButton {
+.addButton,
+.decoderButton {
   position: fixed;
 }
 
 .addButton {
-  width: 4rem;
-  height: 4rem;
-  bottom: 2rem;
   right: 2rem;
-  border-radius: 50%;
-  z-index: 2;
 }
 
 .button-group {
@@ -206,6 +202,10 @@ header,
   width: 0.5em;
   margin: 0;
   transform: scale(2);
+}
+
+.decoderButton {
+  left: 2rem;
 }
 
 .fileInput {
@@ -280,6 +280,15 @@ header,
 
 .zoomOut {
   animation: animatezoom 0.3s reverse;
+}
+
+.addButton,
+.decoderButton {
+  width: 4rem;
+  height: 4rem;
+  bottom: 2rem;
+  border-radius: 50%;
+  z-index: 2;
 }
 
 .footer-content,

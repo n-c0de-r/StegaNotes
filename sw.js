@@ -9,9 +9,9 @@ self.addEventListener("install", event => {
 			return cache.addAll([
 				"/StegaNotes/", // root
 				"/StegaNotes/index.html", // Main HTML file
-				"/StegaNotes/script.js", // Main Javascript file
-				"/StegaNotes/manifest.json", // Manifest file
-				"/StegaNotes/style.css", // Main CSS file
+				//"/StegaNotes/script.js", // Main Javascript file
+				//"/StegaNotes/manifest.json", // Manifest file
+				//"/StegaNotes/style.css", // Main CSS file
 				"/StegaNotes//fonts/OpenDyslexic3-Regular.ttf", // Font
 				"/StegaNotes//icons/android-chrome-36x36.png", // Favicon, Android Chrome M39+ with 0.75 screen density
 				"/StegaNotes//icons/android-chrome-48x48.png", // Favicon, Android Chrome M39+ with 1.0 screen density
