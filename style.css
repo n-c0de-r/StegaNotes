@@ -189,15 +189,6 @@ header,
   position: fixed;
 }
 
-body,
-.container,
-.header-content,
-.footer-content,
-.notes {
-  min-width: 300px;
-  min-height: 500px;
-}
-
 .addButton {
   right: 2rem;
 }
@@ -301,11 +292,6 @@ body,
   z-index: 2;
 }
 
-.container,
-.modal {
-  margin: calc(var(--headerSize) * 2) auto 0 auto;
-}
-
 .footer-content,
 .header-content {
   margin: 0 auto;
@@ -325,4 +311,17 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.container,
+.modal {
+  margin: calc(var(--headerSize) * 2) auto 0 auto;
+}
+
+.container,
+.header-content,
+.footer-content,
+.notes {
+  min-width: 300px;
+  min-height: 500px;
 }
