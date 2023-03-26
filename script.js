@@ -1,6 +1,6 @@
 let isValidUsername, isValidPassword, isConfirmed, wordList;
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js");
+  navigator.serviceWorker.register("/StegaNotes/sw.js");
 }
 
 fillHeader();
@@ -19,8 +19,8 @@ function fillHeader(name) {
   const header = document.querySelector("header");
   header.innerHTML = `
     <div class="header-content">
-      <img src="./icons/favicon.png" class="icon" alt="StegaNotes Icon">
-      <img src="./icons/name.png" class="name" alt="StegaNotes Name">
+      <img src="/StegaNotes/icons/favicon.png" class="icon" alt="StegaNotes Icon">
+      <img src="/StegaNotes/icons/name.png" class="name" alt="StegaNotes Name">
     </div>
   `;
 
@@ -337,7 +337,7 @@ function newModal() {
       <input type="text" class="title" name="noteTitle" placeholder="Enter Title" autofocus>
 
       <label for="noteText">Note Text (max. 200)</label>
-      <textarea class="text" name="noteText" placeholder="Enter original text" rows="4" autofocus></textarea>
+      <textarea class="text" name="noteText" placeholder="Enter original text" rows="4"></textarea>
       <p><span class="status">🔒</span></p>
 
       <div class="button-group">
@@ -835,7 +835,7 @@ function deleteNote(title) {
  * @param {string} name Database name to store the dictionary at
  */
 function loadDictionary(name) {
-  fetch("https://raw.githubusercontent.com/n-c0de-r./main/eng.json")
+  fetch("https://raw.githubusercontent.com/n-c0de-r/StegaNotes/main/eng.json")
     .then(response => response.json())
     .then(data => {
       storeDictionary(name, Object.keys(data)[0], Object.values(data)[0]);
