@@ -326,7 +326,7 @@ function newModal() {
     <div class="modal zoomIn">
       <button class="modalButton close" title="Close Modal">&times;</button>
       <label for="noteTitle">Note Title</label>
-      <input type="text" class="title" name="noteTitle" placeholder="Enter Title">
+      <input type="text" class="title" name="noteTitle" placeholder="Enter Title" autofocus>
 
       <label for="noteText">Note Text (max. 200)</label>
       <textarea class="text" name="noteText" placeholder="Enter original text" rows="4" autofocus></textarea>
