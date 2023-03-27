@@ -33,7 +33,7 @@ StegaNotes stands out for its minimalist design, multiplatform usability, and ab
 In the future, I plan to implement the ability to read and convert TEI files from https://freedict.org/ and convert them to custom JSON files for storing words in the IndexedDB. Additionally, I plan to add the ability to switch dictionaries and languages, and to provide customizable style themes for the app. Finally, refactoring the code to be truly component based and extensible, and introduce a serverless way of resetting lost passwords.
 
 ## Installation and Usage
-StegaNotes is a PWA that can be easily installed and used by visiting the project's [GitHub Page](n-c0de-r.github.io/StegaNotes).
+StegaNotes is a PWA that can be easily installed and used by visiting the project's [GitHub Page](https://n-c0de-r.github.io/StegaNotes/).
 
 ![GIF of the StegaNotes App in action](./StegaNotes_show.gif)
 
