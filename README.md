@@ -9,7 +9,6 @@
   * [Lessons Learned](#lessons-learned)
   * [Unique Features](#unique-features)
   * [Future Implementations](#future-implementations)
-  * [Planned Improvements](#planned-improvements)
   * [Installation and Usage](#installation-and-usage)
   * [Contributing](#contributing)
   * [Credits](#credits)
