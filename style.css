@@ -27,14 +27,23 @@
 
 @media only screen and (orientation: portrait) {
 
+  .button-group {
+    margin: 5% 0;
+  }
+
+  .footer {
+    height: calc(var(--bannerSize) * 1.5);
+  }
+
   .footer-content>a {
     display: block;
     margin-top: calc(var(--bannerSize) / 2 );
     text-shadow: var(--shadow);
   }
 
-  .footer {
-    height: calc(var(--bannerSize) * 1.5);
+  .modalButton {
+    max-width: 45%;
+    margin: 2% 0;
   }
 
   header,
@@ -53,6 +62,10 @@
 }
 
 @media only screen and (orientation: landscape) {
+
+  .button-group {
+    margin: 5%;
+  }
 
   .footer {
     height: var(--bannerSize);
@@ -176,8 +189,7 @@ textarea {
 }
 
 form,
-.modal,
-.notes {
+.modal {
   margin: calc(var(--bannerSize) * 1.5) auto;
 }
 
@@ -207,7 +219,6 @@ header,
 }
 
 .button-group {
-  margin: 5%;
   text-align: center;
 }
 
@@ -237,7 +248,6 @@ header,
 }
 
 .modalButton {
-  max-width: 30%;
   min-width: 10%;
   background-color: var(--mainGreen);
 }
@@ -267,6 +277,7 @@ header,
 .notes {
   display: none;
   width: 95%;
+  margin: calc(var(--bannerSize) * 1.5) auto;
 }
 
 .page {

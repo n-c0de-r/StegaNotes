@@ -1,6 +1,18 @@
 let isValidUsername, isValidPassword, isConfirmed, wordList;
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/StegaNotes/sw.js");
+  navigator.serviceWorker.register("/StegaNotes/sw.js")
+  //https://wicki.io/posts/2017-06-pwa-create-a-new-update-available-notification-using-service-workers/
+  .then((reg) => {
+    reg.onupdatefound = () => {
+      const installingWorker = reg.installing;
+      installingWorker.onstatechange = () => {
+        if (installingWorker.state === "installed") {
+          window.location.reload();
+          resolve(navigator.serviceWorker.controller);
+        }
+      };
+    };
+  });
 }
 
 fillHeader();
