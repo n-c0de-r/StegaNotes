@@ -42,10 +42,11 @@ Anyone is welcome to fork and contribute to the app. The code is well-documented
 
 ## Credits
 
+- The [Simple PWA Template](https://github.com/nikkifurls/simplepwa) by [Nicole Furlan](https://github.com/nikkifurls) that helped me start and understand PWAs better.
 - The [Stack Overflow community](https://crypto.stackexchange.com/a/62776) for providing the general idea behind StegaNotes and steganography techniques
 - https://freedict.org/ for providing the English dictionary file used as a template wordset
 - The [Standing Baby Dinosaurs SVG Bundle](https://www.etsy.com/de-en/listing/1100497380/standing-baby-dinosaurs-svg-bundle-dxf) for providing the basis for StegaNotes' dinosaur icon
-- OpenDyslexic for providing the fonts used in the app.
+- [OpenDyslexic](https://opendyslexic.org/) for providing the fonts used in the app.
 
 ## License
 StegaNotes is licensed under the MIT License.

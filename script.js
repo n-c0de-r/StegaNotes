@@ -40,7 +40,7 @@ function fillHeader(name) {
 function loginContainer() {
   const container = document.querySelector(".page");
   container.innerHTML = `
-    <form class="container">
+    <form>
       <label for="username" id="username-label" autofocus>Username</label>
       <input type="text" class="username" name="username" pattern="^.*(?=.{1,}).*$" title="If the username is invalid, nothing will happen." placeholder="type here" required>
 
@@ -76,7 +76,7 @@ function registerContainer() {
 
   const container = document.querySelector(".page");
   container.innerHTML = `
-    <form class="container">
+    <form>
       <label for="username" id="username-label">New Username</label>
       <input type="text" class="username" name="username" pattern="^.*(?=.{4,12}).*$" title="The username must be 4 to 12 characters long." placeholder="min: 4, max: 12" required autofocus>
 
@@ -96,7 +96,7 @@ function registerContainer() {
     </form>
   `;
 
-  const registerForm = document.querySelector(".container");
+  const registerForm = document.querySelector("form");
   registerForm.addEventListener("submit", function(event) {
     event.preventDefault();
     registerUser();
@@ -320,8 +320,6 @@ function closeModal() {
     event.preventDefault();
     decoderModal();
   });
-
-  newContainer.style.display = 'block';
 }
 
 /**

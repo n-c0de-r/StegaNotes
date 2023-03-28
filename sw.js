@@ -1,4 +1,4 @@
-const cacheName = "stegaNotesCache1.0.37"; // Change value to force update
+const cacheName = "stegaNotes_v1.0.39"; // Change value to force update
 
 self.addEventListener("install", event => {
 	// Kick out the old service worker
