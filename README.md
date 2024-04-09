@@ -1,4 +1,4 @@
-# StegaNotes
+# [StegaNotes](https://n-c0de-r.github.io/StegaNotes/)
 
 ## Table of Contents
 
